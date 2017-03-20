@@ -1,7 +1,6 @@
-package models.controllers
+package controllers
 
-import controllers.HomeController
-import models.helpers.TestSpec
+import helpers.TestSpec
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.test.FakeRequest
 

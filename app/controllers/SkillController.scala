@@ -11,8 +11,8 @@ class SkillController @Inject()(diceRoller: DiceRoller) {
 
   def rollAllDice(dice: Int)(current: Seq[Int] = Seq()): Seq[Int] = {
     if (dice > 0) {
-      val results = current ++ rollDice(dice)
-      rollAllDice(results.count(_.equals(6)))(results)
+      val results = rollDice(dice)
+      rollAllDice(results.count(_.equals(6)))(current ++ results)
     } else current
   }
 

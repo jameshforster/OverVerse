@@ -1,6 +1,6 @@
 package models.coordinates
 
-import models.helpers.TestSpec
+import helpers.TestSpec
 import play.api.libs.json.Json
 
 /**

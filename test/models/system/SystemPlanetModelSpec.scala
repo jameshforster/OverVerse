@@ -2,7 +2,7 @@ package models.system
 
 import models.Volatility
 import models.coordinates.PlanetCoordinateModel
-import models.helpers.TestSpec
+import helpers.TestSpec
 import models.planet.Environment
 
 /**

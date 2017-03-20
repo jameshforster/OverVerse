@@ -1,6 +1,6 @@
 package models
 
-import models.helpers.TestSpec
+import helpers.TestSpec
 
 /**
   * Created by Overlord59 on 15/03/2017.
