@@ -9,14 +9,10 @@ import play.api.libs.json.Json
 class PlanetCoordinateModelSpec extends TestSpec {
 
   "The PlanetCoordinateModel" should {
-    val model = PlanetCoordinateModel(SystemCoordinateModel(1, 2, 3, 4), 5)
+    val model = PlanetCoordinateModel(SystemCoordinateModel(SectorCoordinateModel(1, 2), 3, 4), 5)
 
     "display the correct format when converted to a string" in {
-      model.toString shouldBe "1.2,3.4,5"
-    }
-
-    "display the correct format when converted to Json" in {
-      Json.toJson(model).toString() shouldBe """{"systemCoordinateModel":{"X":1,"Y":2,"x":3,"y":4},"z":5}"""
+      model.toString shouldBe "{1.2}{3.4}{5}"
     }
   }
 }
