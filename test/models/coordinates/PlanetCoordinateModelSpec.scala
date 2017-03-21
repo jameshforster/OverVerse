@@ -14,5 +14,11 @@ class PlanetCoordinateModelSpec extends TestSpec {
     "display the correct format when converted to a string" in {
       model.toString shouldBe "{1.2}{3.4}{5}"
     }
+
+    "create an equivalent model using the overloaded apply" in {
+      val applied = PlanetCoordinateModel(1, 2, 3, 4, 5)
+
+      applied shouldBe model
+    }
   }
 }

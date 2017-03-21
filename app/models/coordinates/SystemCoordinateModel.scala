@@ -11,4 +11,8 @@ case class SystemCoordinateModel(sectorCoordinateModel: SectorCoordinateModel, x
 
 object SystemCoordinateModel {
   implicit val asJson: OFormat[SystemCoordinateModel] = Json.format[SystemCoordinateModel]
+
+  def apply(X: Int, Y: Int, x: Int, y: Int): SystemCoordinateModel = {
+    SystemCoordinateModel(SectorCoordinateModel(X, Y), x, y)
+  }
 }
