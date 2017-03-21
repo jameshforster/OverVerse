@@ -10,7 +10,7 @@ class ValidationSpec extends TestSpec {
   "Creating an attribute" when {
 
     "using a valid value of 0" should {
-      val attribute = Volatility(0)
+      val attribute = Attribute("Volatility", 0)
 
       "have the key for Volatility" in {
         attribute.key shouldBe "Volatility"
@@ -22,7 +22,7 @@ class ValidationSpec extends TestSpec {
     }
 
     "using a valid value of 5" should {
-      val attribute = Volatility(5)
+      val attribute = Attribute("Volatility", 5)
 
       "have the key for Volatility" in {
         attribute.key shouldBe "Volatility"
@@ -35,21 +35,21 @@ class ValidationSpec extends TestSpec {
 
     "using a value below 0" should {
       val exception = intercept[Exception] {
-        Volatility(-1)
+        Attribute("Volatility", -1)
       }
 
       "have the correct exception" in {
-        exception.getMessage shouldBe "requirement failed: The value -1 is not valid for an attribute."
+        exception.getMessage shouldBe "requirement failed: The value -1 is not valid for the attribute Volatility."
       }
     }
 
     "using a value above 5" should {
       val exception = intercept[Exception] {
-        Volatility(6)
+        Attribute("Volatility", 6)
       }
 
       "have the correct exception" in {
-        exception.getMessage shouldBe "requirement failed: The value 6 is not valid for an attribute."
+        exception.getMessage shouldBe "requirement failed: The value 6 is not valid for the attribute Volatility."
       }
     }
   }

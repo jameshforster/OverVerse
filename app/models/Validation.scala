@@ -10,7 +10,7 @@ object Validation {
       value >= 0 && value <= 5
     }
 
-    require(validateAttributeValue(attribute.value), s"The value ${attribute.value} is not valid for an attribute.")
+    require(validateAttributeValue(attribute.value), s"The value ${attribute.value} is not valid for the attribute ${attribute.key}.")
   }
 
   def validateSize(size: Int): Unit = {
