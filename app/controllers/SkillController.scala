@@ -9,6 +9,25 @@ import random.DiceRoller
 @Singleton
 class SkillController @Inject()(diceRoller: DiceRoller) {
 
+  def skillCheck(dice: Int, bonus: Int, passValue: Int): Int = {
+    getDiceValue(rollAllDice(dice)(), passValue) + getSkillBonusValue(BigDecimal(bonus))
+  }
+
+  def getDiceValue(diceRolls: Seq[Int], passValue: Int): Int = {
+    diceRolls.count(_ >= passValue)
+  }
+
+  def getSkillBonusValue(bonus: BigDecimal): Int = {
+    val result = bonus/10 + getPartialSkillBonus(bonus)
+    result.bigDecimal.intValue()
+  }
+
+  def getPartialSkillBonus(bonus: BigDecimal): Int = {
+    val partial = bonus.bigDecimal.remainder(BigDecimal(10))
+    if (diceRoller.rollD10() <= partial) 1
+    else 0
+  }
+
   def rollAllDice(dice: Int)(current: Seq[Int] = Seq()): Seq[Int] = {
     if (dice > 0) {
       val results = rollDice(dice)

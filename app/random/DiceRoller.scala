@@ -14,4 +14,8 @@ class DiceRoller @Inject()() {
   def rollD6(): Int = {
     Random.nextInt(6) + 1
   }
+
+  def rollD10(): Int = {
+    Random.nextInt(10) + 1
+  }
 }
