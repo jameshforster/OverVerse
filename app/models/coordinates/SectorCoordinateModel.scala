@@ -10,5 +10,5 @@ case class SectorCoordinateModel(X: Int, Y: Int) {
 }
 
 object SectorCoordinateModel {
-  implicit val asJson: OFormat[SectorCoordinateModel] = Json.format[SectorCoordinateModel]
+  implicit val jsonFormat: OFormat[SectorCoordinateModel] = Json.format[SectorCoordinateModel]
 }

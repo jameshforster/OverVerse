@@ -10,5 +10,5 @@ import play.api.libs.json.{Json, OFormat}
 case class SectorModel(coordinates: SectorCoordinateModel, systems: Seq[SystemModel])
 
 object SectorModel {
-  implicit val asJson: OFormat[SectorModel] = Json.format[SectorModel]
+  implicit val jsonFormat: OFormat[SectorModel] = Json.format[SectorModel]
 }

@@ -17,5 +17,5 @@ case class SystemPlanetModel(coordinate: PlanetCoordinateModel,
 }
 
 object SystemPlanetModel {
-  implicit val asJson: OFormat[SystemPlanetModel] = Json.format[SystemPlanetModel]
+  implicit val jsonFormat: OFormat[SystemPlanetModel] = Json.format[SystemPlanetModel]
 }

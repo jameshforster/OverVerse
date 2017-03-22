@@ -9,5 +9,5 @@ import play.api.libs.json.{Json, OFormat}
 case class Environment(name: String, attributes: Seq[Attribute])
 
 object Environment {
-  implicit val asJson: OFormat[Environment] = Json.format[Environment]
+  implicit val jsonFormat: OFormat[Environment] = Json.format[Environment]
 }

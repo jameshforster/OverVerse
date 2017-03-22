@@ -10,5 +10,5 @@ case class Attribute(key: String, value: Int) {
 }
 
 object Attribute {
-  implicit val asJson: OFormat[Attribute] = Json.format[Attribute]
+  implicit val jsonFormat: OFormat[Attribute] = Json.format[Attribute]
 }

@@ -10,5 +10,5 @@ import play.api.libs.json.{Json, OFormat}
 case class SystemModel(coordinates: SystemCoordinateModel, planets: Seq[SystemPlanetModel], entities: Seq[Entity])
 
 object SystemModel {
-  implicit val asJson: OFormat[SystemModel] = Json.format[SystemModel]
+  implicit val jsonFormat: OFormat[SystemModel] = Json.format[SystemModel]
 }

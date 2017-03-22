@@ -8,5 +8,5 @@ import play.api.libs.json.{Json, OFormat}
 case class Entity(name: String)
 
 object Entity {
-  implicit val asJson: OFormat[Entity] = Json.format[Entity]
+  implicit val jsonFormat: OFormat[Entity] = Json.format[Entity]
 }
