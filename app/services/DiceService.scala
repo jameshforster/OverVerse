@@ -18,4 +18,8 @@ class DiceService @Inject()() {
   def rollD10(): Int = {
     Random.nextInt(10) + 1
   }
+
+  def rollDX(x: Int): Int = {
+    Random.nextInt(x)
+  }
 }
