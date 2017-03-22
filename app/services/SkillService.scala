@@ -1,13 +1,12 @@
-package controllers
+package services
 
 import com.google.inject.{Inject, Singleton}
-import random.DiceRoller
 
 /**
   * Created by Overlord59 on 20/03/2017.
   */
 @Singleton
-class SkillController @Inject()(diceRoller: DiceRoller) {
+class SkillService @Inject()(diceRoller: DiceService) {
 
   def skillCheck(dice: Int, bonus: Int, passValue: Int): Int = {
     getDiceValue(rollAllDice(dice)(), passValue) + getSkillBonusValue(BigDecimal(bonus))

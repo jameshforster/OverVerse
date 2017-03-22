@@ -1,4 +1,4 @@
-package random
+package services
 
 import com.google.inject.{Inject, Singleton}
 
@@ -9,7 +9,7 @@ import scala.util.Random
   */
 
 @Singleton
-class DiceRoller @Inject()() {
+class DiceService @Inject()() {
 
   def rollD6(): Int = {
     Random.nextInt(6) + 1

@@ -1,21 +1,20 @@
-package controllers
+package services
 
 import helpers.TestSpec
 import org.scalatestplus.play.OneAppPerSuite
-import random.DiceRoller
 
 /**
   * Created by Overlord59 on 20/03/2017.
   */
-class SkillControllerSpec extends TestSpec with OneAppPerSuite {
+class SkillServiceSpec extends TestSpec with OneAppPerSuite {
 
-  def setupController(d6Result: Int, d10Result: Int): SkillController = {
-    val roller = new DiceRoller {
+  def setupController(d6Result: Int, d10Result: Int): SkillService = {
+    val roller = new DiceService {
       override def rollD6(): Int = d6Result
       override def rollD10(): Int = d10Result
     }
 
-    new SkillController(roller)
+    new SkillService(roller)
   }
 
   "Calling .rollDice" should {
