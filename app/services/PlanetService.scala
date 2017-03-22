@@ -4,25 +4,27 @@ import com.google.inject.{Inject, Singleton}
 import models.Attribute
 import models.planet.{EnvironmentModel, PlanetModel}
 
+import scala.concurrent.Future
+
 /**
   * Created by Overlord59 on 22/03/2017.
   */
 @Singleton
 class PlanetService @Inject()(diceService: DiceService) {
 
-  def generateNewPlanet(): PlanetModel = {
+  def generateNewPlanet(): Future[PlanetModel] = {
     ???
   }
 
-  def generatePlanetSize(): Int = {
+  def generatePlanetSize(): Future[Int] = {
     ???
   }
 
-  def generateAttribute(key: String): Attribute = {
+  def generateAttribute(key: String): Future[Attribute] = {
     ???
   }
 
-  def generateEnvironment(attributes: Seq[Attribute]): EnvironmentModel = {
+  def generateEnvironment(attributes: Seq[Attribute]): Future[EnvironmentModel] = {
 
     val validateEnvironment: EnvironmentModel => Boolean = {
       _.requirements.forall {
@@ -30,9 +32,9 @@ class PlanetService @Inject()(diceService: DiceService) {
       }
     }
 
-    def randomiseEnvironment(environments: Seq[EnvironmentModel]) = {
+    def randomiseEnvironment(environments: Seq[EnvironmentModel]): Future[EnvironmentModel] = {
       val index = diceService.rollDX(environments.length)
-      environments.apply(index)
+      Future.successful(environments.apply(index))
     }
 
     val validEnvironments = EnvironmentModel.allEnvironments.filter(validateEnvironment)

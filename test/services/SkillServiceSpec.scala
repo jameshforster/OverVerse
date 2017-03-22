@@ -23,7 +23,7 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
       lazy val controller = setupController(4, 0)
       lazy val result = controller.rollDice(2)
 
-      result shouldBe Seq(4, 4)
+      await(result) shouldBe Seq(4, 4)
     }
   }
 
@@ -33,15 +33,15 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
       lazy val controller = setupController(4, 0)
 
       "a current sequence is not provided" in {
-        lazy val result = controller.rollAllDice(2)()
+        lazy val result = controller.rollAllDice(2)
 
-        result shouldBe Seq(4, 4)
+        await(result) shouldBe Seq(4, 4)
       }
 
       "a current sequence is provided" in {
-        lazy val result = controller.rollAllDice(2)(Seq(1, 2, 3, 4, 5, 6, 6))
+        lazy val result = controller.rollAllDice(2, Seq(1, 2, 3, 4, 5, 6, 6))
 
-        result shouldBe Seq(1, 2, 3, 4, 5, 6, 6, 4, 4)
+        await(result) shouldBe Seq(1, 2, 3, 4, 5, 6, 6, 4, 4)
       }
     }
   }
@@ -55,7 +55,7 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 0)
         lazy val result = controller.getDiceValue(rolls, 4)
 
-        result shouldBe 4
+        await(result) shouldBe 4
       }
 
       "using a pass value of 3 with 4 rolls above 3" in {
@@ -63,7 +63,7 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 0)
         lazy val result = controller.getDiceValue(rolls, 3)
 
-        result shouldBe 4
+        await(result) shouldBe 4
       }
     }
 
@@ -74,7 +74,7 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 0)
         lazy val result = controller.getDiceValue(rolls, 6)
 
-        result shouldBe 1
+        await(result) shouldBe 1
       }
     }
   }
@@ -87,14 +87,14 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 6)
         lazy val result = controller.getPartialSkillBonus(6)
 
-        result shouldBe 1
+        await(result) shouldBe 1
       }
 
       "provided with a value of 5 and a dice roll of 5" in {
         lazy val controller = setupController(0, 5)
         lazy val result = controller.getPartialSkillBonus(5)
 
-        result shouldBe 1
+        await(result) shouldBe 1
       }
     }
 
@@ -104,14 +104,14 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 7)
         lazy val result = controller.getPartialSkillBonus(6)
 
-        result shouldBe 0
+        await(result) shouldBe 0
       }
 
       "provided with a value of 5 and a dice roll of 6" in {
         lazy val controller = setupController(0, 6)
         lazy val result = controller.getPartialSkillBonus(5)
 
-        result shouldBe 0
+        await(result) shouldBe 0
       }
     }
   }
@@ -124,14 +124,14 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 1)
         lazy val result = controller.getSkillBonusValue(50)
 
-        result shouldBe 5
+        await(result) shouldBe 5
       }
 
       "provided with a value of 45 and a dice roll of 5" in {
         lazy val controller = setupController(0, 5)
         lazy val result = controller.getSkillBonusValue(45)
 
-        result shouldBe 5
+        await(result) shouldBe 5
       }
     }
 
@@ -140,14 +140,14 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
         lazy val controller = setupController(0, 1)
         lazy val result = controller.getSkillBonusValue(40)
 
-        result shouldBe 4
+        await(result) shouldBe 4
       }
 
       "provided with a value of 45 and a dice roll of 6" in {
         lazy val controller = setupController(0, 6)
         lazy val result = controller.getSkillBonusValue(45)
 
-        result shouldBe 4
+        await(result) shouldBe 4
       }
     }
   }
@@ -158,14 +158,14 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
       lazy val controller = setupController(4, 6)
       lazy val result = controller.skillCheck(2, 21, 4)
 
-      result shouldBe 4
+      await(result) shouldBe 4
     }
 
     "return a value of 2" in {
       lazy val controller = setupController(4, 6)
       lazy val result = controller.skillCheck(2, 19, 5)
 
-      result shouldBe 2
+      await(result) shouldBe 2
     }
   }
 }
