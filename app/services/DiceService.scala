@@ -2,6 +2,7 @@ package services
 
 import com.google.inject.{Inject, Singleton}
 
+import scala.concurrent.Future
 import scala.util.Random
 
 /**
@@ -11,15 +12,15 @@ import scala.util.Random
 @Singleton
 class DiceService @Inject()() {
 
-  def rollD6(): Int = {
-    Random.nextInt(6) + 1
+  def rollD6(): Future[Int] = {
+    Future.successful(Random.nextInt(6) + 1)
   }
 
-  def rollD10(): Int = {
-    Random.nextInt(10) + 1
+  def rollD10(): Future[Int] = {
+    Future.successful(Random.nextInt(10) + 1)
   }
 
-  def rollDX(x: Int): Int = {
-    Random.nextInt(x)
+  def rollDX(x: Int): Future[Int] = {
+    Future.successful(Random.nextInt(x))
   }
 }

@@ -7,6 +7,8 @@ import org.mockito.ArgumentMatchers
 import org.scalatestplus.play.OneAppPerSuite
 import org.mockito.Mockito._
 
+import scala.concurrent.Future
+
 /**
   * Created by james-forster on 22/03/17.
   */
@@ -22,7 +24,7 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
     val mockDiceService = mock[DiceService]
 
     when(mockDiceService.rollDX(ArgumentMatchers.any()))
-      .thenReturn(randomResult)
+      .thenReturn(Future.successful(randomResult))
 
     setupService(mockDiceService)
   }

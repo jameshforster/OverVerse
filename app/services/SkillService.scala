@@ -37,8 +37,11 @@ class SkillService @Inject()(diceRoller: DiceService) {
 
   def getPartialSkillBonus(bonus: BigDecimal): Future[Int] = {
     val partial = bonus.bigDecimal.remainder(BigDecimal(10))
-    Future.successful(if (diceRoller.rollD10() <= partial) 1
-    else 0)
+
+    diceRoller.rollD10().map { value =>
+      if (value <= partial) 1
+      else 0
+    }
   }
 
   def rollAllDice(dice: Int, current: Seq[Int] = Seq()): Future[Seq[Int]] = {
@@ -52,7 +55,7 @@ class SkillService @Inject()(diceRoller: DiceService) {
   def rollDice(dice: Int): Future[Seq[Int]] = {
 
     if (dice > 1) {
-      val individualDiceResult = Future.successful(Seq(diceRoller.rollD6()))
+      val individualDiceResult = diceRoller.rollD6().map{ x => Seq(x)}
       val remainingDiceResults = rollDice(dice - 1)
 
       for {
@@ -62,6 +65,6 @@ class SkillService @Inject()(diceRoller: DiceService) {
         remainingDice ++ rolledDice
       }
     }
-    else Future.successful(Seq(diceRoller.rollD6()))
+    else diceRoller.rollD6().map{ x => Seq(x)}
   }
 }

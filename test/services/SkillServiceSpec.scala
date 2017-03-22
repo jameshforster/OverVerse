@@ -3,6 +3,8 @@ package services
 import helpers.TestSpec
 import org.scalatestplus.play.OneAppPerSuite
 
+import scala.concurrent.Future
+
 /**
   * Created by Overlord59 on 20/03/2017.
   */
@@ -10,8 +12,8 @@ class SkillServiceSpec extends TestSpec with OneAppPerSuite {
 
   def setupController(d6Result: Int, d10Result: Int): SkillService = {
     val roller = new DiceService {
-      override def rollD6(): Int = d6Result
-      override def rollD10(): Int = d10Result
+      override def rollD6(): Future[Int] = Future.successful(d6Result)
+      override def rollD10(): Future[Int] = Future.successful(d10Result)
     }
 
     new SkillService(roller)

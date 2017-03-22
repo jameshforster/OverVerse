@@ -5,6 +5,7 @@ import models.Attribute
 import models.planet.{EnvironmentModel, PlanetModel}
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by Overlord59 on 22/03/2017.
@@ -33,8 +34,9 @@ class PlanetService @Inject()(diceService: DiceService) {
     }
 
     def randomiseEnvironment(environments: Seq[EnvironmentModel]): Future[EnvironmentModel] = {
-      val index = diceService.rollDX(environments.length)
-      Future.successful(environments.apply(index))
+      diceService.rollDX(environments.length).map { index =>
+        environments.apply(index)
+      }
     }
 
     val validEnvironments = EnvironmentModel.allEnvironments.filter(validateEnvironment)
