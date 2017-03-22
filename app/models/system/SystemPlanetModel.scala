@@ -1,7 +1,7 @@
 package models.system
 
 import models.coordinates.PlanetCoordinateModel
-import models.planet.Environment
+import models.planet.EnvironmentModel
 import models.{Attribute, Validation}
 import play.api.libs.json.{Json, OFormat}
 
@@ -10,7 +10,7 @@ import play.api.libs.json.{Json, OFormat}
   */
 case class SystemPlanetModel(coordinate: PlanetCoordinateModel,
                              size: Int,
-                             environment: Environment,
+                             environment: EnvironmentModel,
                              volatility: Attribute,
                              name: String = "Unnamed World") {
   Validation.validateSize(size)

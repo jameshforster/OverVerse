@@ -9,7 +9,7 @@ import play.api.libs.json.{Json, OFormat}
   */
 case class PlanetModel(coordinate: PlanetCoordinateModel,
                        size: Int,
-                       environment: Environment,
+                       environment: EnvironmentModel,
                        attributes: Seq[Attribute],
                        name: String = "Unnamed World")
 

@@ -2,7 +2,7 @@ package services
 
 import com.google.inject.{Inject, Singleton}
 import models.Attribute
-import models.planet.{Environment, PlanetModel}
+import models.planet.{EnvironmentModel, PlanetModel}
 
 /**
   * Created by Overlord59 on 22/03/2017.
@@ -22,20 +22,20 @@ class PlanetService @Inject()(diceService: DiceService) {
     ???
   }
 
-  def generateEnvironment(attributes: Seq[Attribute]): Environment = {
+  def generateEnvironment(attributes: Seq[Attribute]): EnvironmentModel = {
 
-    val validateEnvironment: Environment => Boolean = {
+    val validateEnvironment: EnvironmentModel => Boolean = {
       _.requirements.forall {
         _.apply(attributes)
       }
     }
 
-    def randomiseEnvironment(environments: Seq[Environment]) = {
+    def randomiseEnvironment(environments: Seq[EnvironmentModel]) = {
       val index = diceService.rollDX(environments.length)
       environments.apply(index)
     }
 
-    val validEnvironments = Environment.environments.filter(validateEnvironment)
+    val validEnvironments = EnvironmentModel.allEnvironments.filter(validateEnvironment)
 
     randomiseEnvironment(validEnvironments)
   }
