@@ -23,7 +23,7 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
   def setupMockedService(randomResult: Int): PlanetService = {
     val mockDiceService = mock[DiceService]
 
-    when(mockDiceService.rollDX(ArgumentMatchers.any()))
+    when(mockDiceService.rollDX(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(randomResult))
 
     setupService(mockDiceService)
@@ -58,6 +58,70 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
 
         await(result) shouldBe EnvironmentModel.mountainous
       }
+    }
+  }
+
+  "Calling .generateAttribute" should {
+
+    "create an attribute 'testKey' with a value returned by the dice roller" in {
+      lazy val service = setupMockedService(3)
+      lazy val result = service.generateAttribute("testKey")
+
+      await(result) shouldBe Attribute("testKey", 3)
+    }
+
+    "create an attribute 'testKey2' with a value returned by the dice roller" in {
+      lazy val service = setupMockedService(0)
+      lazy val result = service.generateAttribute("testKey2")
+
+      await(result) shouldBe Attribute("testKey2", 0)
+    }
+
+    "return a value for attribute between 0 and 5" in {
+      lazy val service = setupService(diceService)
+      lazy val attributeValue = await(service.generateAttribute("testKey")).value
+      lazy val result = attributeValue <= 5 && attributeValue >= 0
+
+      result shouldBe true
+    }
+
+    "not return a value for attribute greater than 5" in {
+      lazy val service = setupService(diceService)
+      lazy val attributeValue = await(service.generateAttribute("testKey")).value
+      lazy val result = attributeValue > 5
+
+      result shouldBe false
+    }
+
+    "not return a value for attribute less than 0" in {
+      lazy val service = setupService(diceService)
+      lazy val attributeValue = await(service.generateAttribute("testKey")).value
+      lazy val result = attributeValue < 0
+
+      result shouldBe false
+    }
+  }
+
+  "Calling .generatePlanetSize" should {
+    lazy val service = setupService(diceService)
+    lazy val size = await(service.generatePlanetSize())
+
+    "return a value for size between 3 and 10" in {
+      lazy val result = size <= 10 && size >= 3
+
+      result shouldBe true
+    }
+
+    "not return a value less than 3" in {
+      lazy val result = size < 3
+
+      result shouldBe false
+    }
+
+    "not return a value greater than 10" in {
+      lazy val result = size > 10
+
+      result shouldBe false
     }
   }
 }

@@ -20,7 +20,7 @@ class DiceService @Inject()() {
     Future.successful(Random.nextInt(10) + 1)
   }
 
-  def rollDX(x: Int): Future[Int] = {
-    Future.successful(Random.nextInt(x))
+  def rollDX(x: Int, bonus: Int = 0): Future[Int] = {
+    Future.successful(Random.nextInt(x) + bonus)
   }
 }
