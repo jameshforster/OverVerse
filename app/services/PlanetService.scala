@@ -4,6 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import models.Attribute
 import models.coordinates.PlanetCoordinateModel
 import models.planet.{EnvironmentModel, PlanetModel}
+import contants.AttributeKeys
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,12 +41,12 @@ class PlanetService @Inject()(diceService: DiceService) {
   }
 
   def generatePrimaryAttributes(coordinates: PlanetCoordinateModel): Future[Seq[Attribute]] = {
-    val solar = Attribute("Solar", 5 - coordinates.z)
-    val getAtmosphere = generateAttribute("Atmosphere")
-    val getMetal = generateAttribute("Metal")
-    val getFuel = generateAttribute("Fuel")
-    val getNuclear = generateAttribute("Nuclear")
-    val getVolatility = generateAttribute("Volatility")
+    val solar = Attribute(AttributeKeys.solar, 5 - coordinates.z)
+    val getAtmosphere = generateAttribute(AttributeKeys.atmosphere)
+    val getMetal = generateAttribute(AttributeKeys.metal)
+    val getFuel = generateAttribute(AttributeKeys.fuel)
+    val getNuclear = generateAttribute(AttributeKeys.nuclear)
+    val getVolatility = generateAttribute(AttributeKeys.volatility)
 
     for {
       atmosphere <- getAtmosphere
@@ -57,13 +58,13 @@ class PlanetService @Inject()(diceService: DiceService) {
   }
 
   def generateSecondaryAttributes(attributes: Seq[Attribute]): Future[Seq[Attribute]] = {
-    val getTemperature = diceService.rollDX(3, extractAttributeValue(attributes, "Solar")).map {
-      case result if result > 5 => Attribute("Temperature", 5)
-      case result => Attribute("Temperature", result)
+    val getTemperature = diceService.rollDX(3, extractAttributeValue(attributes, AttributeKeys.solar)).map {
+      case result if result > 5 => Attribute(AttributeKeys.temperature, 5)
+      case result => Attribute(AttributeKeys.temperature, result)
     }
-    val getWind = extractAttributeValue(attributes, "Atmosphere") match {
-      case 2|3|4 => diceService.rollDX(3, 2).map { result => Attribute("Wind", result) }
-      case atmosphere => Future.successful(Attribute("Wind", atmosphere))
+    val getWind = extractAttributeValue(attributes, AttributeKeys.atmosphere) match {
+      case 2|3|4 => diceService.rollDX(3, 2).map { result => Attribute(AttributeKeys.wind, result) }
+      case atmosphere => Future.successful(Attribute(AttributeKeys.wind, atmosphere))
     }
 
     for {
@@ -73,20 +74,20 @@ class PlanetService @Inject()(diceService: DiceService) {
   }
 
   def generateTertiaryAttributes(attributes: Seq[Attribute]): Future[Seq[Attribute]] = {
-    val temperature = extractAttributeValue(attributes, "Temperature")
+    val temperature = extractAttributeValue(attributes, AttributeKeys.temperature)
     val getWater = temperature match {
-      case 4 => diceService.rollDX(1).map {result => Attribute("Water", result)}
-      case 5 => Future.successful(Attribute("Water", 0))
-      case _ => generateAttribute("Water")
+      case 4 => diceService.rollDX(1).map {result => Attribute(AttributeKeys.water, result)}
+      case 5 => Future.successful(Attribute(AttributeKeys.water, 0))
+      case _ => generateAttribute(AttributeKeys.water)
     }
     val getFertility = {
-      val volatility = extractAttributeValue(attributes, "Volatility")
-      val atmosphere = extractAttributeValue(attributes, "Atmosphere")
+      val volatility = extractAttributeValue(attributes, AttributeKeys.volatility)
+      val atmosphere = extractAttributeValue(attributes, AttributeKeys.atmosphere)
 
       (atmosphere, temperature, volatility) match {
-        case (2|3, 2|3, _) => generateAttribute("Fertility")
-        case (_, _, x) if x > 3 => generateAttribute("Fertility")
-        case _ => Future.successful(Attribute("Fertility", 0))
+        case (2|3, 2|3, _) => generateAttribute(AttributeKeys.fertility)
+        case (y, _, x) if x > 3 && y < 5=> generateAttribute(AttributeKeys.fertility)
+        case _ => Future.successful(Attribute(AttributeKeys.fertility, 0))
       }
     }
 

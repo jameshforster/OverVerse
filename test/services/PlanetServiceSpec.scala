@@ -15,7 +15,7 @@ import scala.concurrent.Future
   */
 class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
 
-  lazy val diceService = app.injector.instanceOf[DiceService]
+  lazy val diceService: DiceService = app.injector.instanceOf[DiceService]
 
   def setupService(diceService: DiceService): PlanetService = {
     new PlanetService(diceService)
