@@ -1,4 +1,4 @@
-[<img src="https://img.shields.io/travis/playframework/play-scala-starter-example.svg"/>](https://travis-ci.org/playframework/play-scala-starter-example)
+[<img src="https://img.shields.io/travis/jameshforster/OverVerse.svg"/>](https://travis-ci.org/jameshforster/OverVerse)
 
 # Play Scala Starter
 
