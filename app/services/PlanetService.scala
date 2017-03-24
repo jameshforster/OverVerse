@@ -24,8 +24,13 @@ class PlanetService @Inject()(diceService: DiceService) {
 
   def generateTemperature(solar: Int): Future[Attribute] = {
     diceService.rollDX(3, solar).map { result =>
-      Attribute("Temperature", result)
+      val modified = if (result > 5) 5 else result
+      Attribute("Temperature", modified)
     }
+  }
+
+  def extractAttributeValue(attributes: Seq[Attribute], key: String): Int = {
+    attributes.find(_.key == key).map{_.value}.getOrElse(0)
   }
 
   def generatePrimaryAttributes(coordinates: PlanetCoordinateModel): Future[Seq[Attribute]] = {
@@ -46,11 +51,11 @@ class PlanetService @Inject()(diceService: DiceService) {
   }
 
   def generateSecondaryAttributes(attributes: Seq[Attribute]): Future[Seq[Attribute]] = {
-    val getTemperature = diceService.rollDX(3, attributes.find{_.key == "Solar"}.map{_.value}.getOrElse(0)).map {
+    val getTemperature = diceService.rollDX(3, extractAttributeValue(attributes, "Solar")).map {
       case result if result > 5 => Attribute("Temperature", 5)
       case result => Attribute("Temperature", result)
     }
-    val getWind = attributes.find{_.key == "Atmosphere"}.map{_.value}.getOrElse(0) match {
+    val getWind = extractAttributeValue(attributes, "Atmosphere") match {
       case 2|3|4 => diceService.rollDX(3, 2).map { result => Attribute("Wind", result) }
       case atmosphere => Future.successful(Attribute("Wind", atmosphere))
     }
@@ -59,6 +64,30 @@ class PlanetService @Inject()(diceService: DiceService) {
       temperature <- getTemperature
       wind <- getWind
     } yield attributes ++ Seq(temperature, wind)
+  }
+
+  def generateTertiaryAttributes(attributes: Seq[Attribute]): Future[Seq[Attribute]] = {
+    val temperature = extractAttributeValue(attributes, "Temperature")
+    val getWater = temperature match {
+      case 4 => diceService.rollDX(1).map {result => Attribute("Water", result)}
+      case 5 => Future.successful(Attribute("Water", 0))
+      case _ => generateAttribute("Water")
+    }
+    val getFertility = {
+      val volatility = extractAttributeValue(attributes, "Volatility")
+      val atmosphere = extractAttributeValue(attributes, "Atmosphere")
+
+      (atmosphere, temperature, volatility) match {
+        case (2|3, 2|3, _) => generateAttribute("Fertility")
+        case (_, _, x) if x > 3 => generateAttribute("Fertility")
+        case _ => Future.successful(Attribute("Fertility", 0))
+      }
+    }
+
+    for {
+      water <- getWater
+      fertility <- getFertility
+    } yield attributes ++ Seq(water, fertility)
   }
 
   def generateEnvironment(attributes: Seq[Attribute]): Future[EnvironmentModel] = {

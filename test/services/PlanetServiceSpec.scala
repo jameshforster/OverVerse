@@ -2,6 +2,7 @@ package services
 
 import helpers.TestSpec
 import models.Attribute
+import models.coordinates.PlanetCoordinateModel
 import models.planet.EnvironmentModel
 import org.mockito.ArgumentMatchers
 import org.scalatestplus.play.OneAppPerSuite
@@ -122,6 +123,103 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
       lazy val result = size > 10
 
       result shouldBe false
+    }
+  }
+
+  "Calling generateTemperature" should {
+
+    "return an attribute" which {
+
+      "has a value equal to the dice roll when valid" in {
+        lazy val service = setupMockedService(4)
+        lazy val result = service.generateTemperature(3)
+
+        await(result) shouldBe Attribute("Temperature", 4)
+      }
+
+      "has a value equal to 5 when the dice roll is invalid" in {
+        lazy val service = setupMockedService(6)
+        lazy val result = service.generateTemperature(3)
+
+        await(result) shouldBe Attribute("Temperature", 5)
+      }
+    }
+
+    "return a value" which {
+      lazy val service = setupService(diceService)
+
+      "should be between 0 and 5" in {
+        lazy val temperature = await(service.generateTemperature(await(diceService.rollDX(6))))
+        lazy val result = temperature.value >= 0 && temperature.value <= 5
+
+        result shouldBe true
+      }
+
+      "should not be less than 0" in {
+        lazy val temperature = await(service.generateTemperature(await(diceService.rollDX(6))))
+        lazy val result = temperature.value < 0
+
+        result shouldBe false
+      }
+
+      "should not be greater than 5" in {
+        lazy val temperature = await(service.generateTemperature(await(diceService.rollDX(6))))
+        lazy val result = temperature.value > 5
+
+        result shouldBe false
+      }
+    }
+  }
+
+  "Calling .extractAttributeValue" should {
+    lazy val service = setupService(diceService)
+
+    "return a value when found" in {
+      val attributes = Seq(Attribute("test", 3), Attribute("test2", 5))
+      lazy val result = service.extractAttributeValue(attributes, "test2")
+
+      result shouldBe 5
+    }
+
+    "return a default value of 0 when not found" in {
+      val attributes = Seq(Attribute("test", 3), Attribute("test2", 5))
+      lazy val result = service.extractAttributeValue(attributes, "test3")
+
+      result shouldBe 0
+    }
+  }
+
+  "Calling .generatePrimaryAttributes" should {
+
+    "return a valid sequence of attributes" when {
+
+      "the dice roller returns 4" in {
+        lazy val service = setupMockedService(4)
+        lazy val result = service.generatePrimaryAttributes(PlanetCoordinateModel(1, 2, 3, 4, 5))
+
+        await(result) shouldBe Seq(Attribute("Solar", 0), Attribute("Atmosphere", 4), Attribute("Metal", 4), Attribute("Fuel", 4), Attribute("Nuclear", 4), Attribute("Volatility", 4))
+      }
+
+      "the dice roller returns 2" in {
+        lazy val service = setupMockedService(2)
+        lazy val result = service.generatePrimaryAttributes(PlanetCoordinateModel(1, 2, 3, 4, 0))
+
+        await(result) shouldBe Seq(Attribute("Solar", 5), Attribute("Atmosphere", 2), Attribute("Metal", 2), Attribute("Fuel", 2), Attribute("Nuclear", 2), Attribute("Volatility", 2))
+      }
+    }
+  }
+
+  "Calling .generateSecondaryAttributes" should {
+
+    "return a valid sequence of attributes" when {
+
+      "the dice roller returns 4" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 4))
+        lazy val service = setupMockedService(3)
+        lazy val result = service.generateSecondaryAttributes(seq)
+
+        await(result) shouldBe Seq(Attribute("Solar", 0), Attribute("Atmosphere", 4), Attribute("Temperature", 3), Attribute("Wind", 5))
+      }
     }
   }
 }
