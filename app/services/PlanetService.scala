@@ -3,7 +3,7 @@ package services
 import com.google.inject.{Inject, Singleton}
 import models.Attribute
 import models.coordinates.PlanetCoordinateModel
-import models.planet.EnvironmentModel
+import models.planet.{EnvironmentModel, PlanetModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -13,6 +13,19 @@ import scala.concurrent.Future
   */
 @Singleton
 class PlanetService @Inject()(diceService: DiceService) {
+
+  def generatePlanet(coordinateModel: PlanetCoordinateModel): Future[PlanetModel] = {
+    val getSize = generatePlanetSize()
+    val getPrimaryAttributes = generatePrimaryAttributes(coordinateModel)
+
+    for {
+      size <- getSize
+      primaryAttributes <- getPrimaryAttributes
+      secondaryAttributes <- generateSecondaryAttributes(primaryAttributes)
+      tertiaryAttributes <- generateTertiaryAttributes(secondaryAttributes)
+      environment <- generateEnvironment(tertiaryAttributes)
+    } yield PlanetModel(coordinateModel, size, environment, tertiaryAttributes)
+  }
 
   def generatePlanetSize(): Future[Int] = diceService.rollDX(8, 3)
 

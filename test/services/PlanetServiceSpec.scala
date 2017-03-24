@@ -3,7 +3,7 @@ package services
 import helpers.TestSpec
 import models.Attribute
 import models.coordinates.PlanetCoordinateModel
-import models.planet.EnvironmentModel
+import models.planet.{EnvironmentModel, PlanetModel}
 import org.mockito.ArgumentMatchers
 import org.scalatestplus.play.OneAppPerSuite
 import org.mockito.Mockito._
@@ -28,6 +28,17 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
       .thenReturn(Future.successful(randomResult))
 
     setupService(mockDiceService)
+  }
+
+  "Calling .generatePlanet" should {
+    lazy val coordinates = PlanetCoordinateModel(1, 2, 3, 4, 2)
+    lazy val service = setupService(diceService)
+
+    "create a valid planet" in {
+      lazy val result = service.generatePlanet(coordinates)
+
+      await(result).isInstanceOf[PlanetModel] shouldBe true
+    }
   }
 
   "Calling .generateEnvironment" when {
