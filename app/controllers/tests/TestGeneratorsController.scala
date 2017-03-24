@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
   * Created by james-forster on 24/03/17.
   */
 @Singleton
-class PlanetTestController @Inject()(planetService: PlanetService) extends Controller {
+class TestGeneratorsController @Inject()(planetService: PlanetService) extends Controller {
 
   val createPlanet: Action[AnyContent] = Action.async { implicit request =>
     Try(request.body.asJson.get.as[PlanetCoordinateModel]) match {
