@@ -211,14 +211,157 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
 
   "Calling .generateSecondaryAttributes" should {
 
-    "return a valid sequence of attributes" when {
+    "return a list with the original array" in {
+      val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 4))
+      lazy val service = setupService(diceService)
+      lazy val result = service.generateSecondaryAttributes(seq)
 
-      "the dice roller returns 4" in {
+      await(result).containsSlice(seq) shouldBe true
+    }
+
+    "return a list containing the Temperature attribute" which {
+
+      "has a value between 0 and 5 when result cannot be greater than 5" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 0))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateSecondaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Temperature")
+
+        result <= 5 && result >= 0 shouldBe true
+      }
+
+      "has a value of 5 when result cannot is greater than 5" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 0))
+        lazy val service = setupMockedService(6)
+        lazy val attributes = service.generateSecondaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Temperature")
+
+        result == 5 shouldBe true
+      }
+    }
+
+    "return a list containing the Wind attribute" which {
+
+      "has a value between 2 and 4 with an atmosphere of 2" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 2))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateSecondaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Wind")
+
+        result <= 4 && result >= 2 shouldBe true
+      }
+
+      "has a value between 2 and 4 with an atmosphere of 3" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 3))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateSecondaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Wind")
+
+        result <= 4 && result >= 2 shouldBe true
+      }
+
+      "has a value between 2 and 4 with an atmosphere of 4" in {
         val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 4))
-        lazy val service = setupMockedService(3)
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateSecondaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Wind")
+
+        result <= 4 && result >= 2 shouldBe true
+      }
+
+      "have a value equal to the atmosphere with a value less than 2" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 1))
+        lazy val service = setupService(diceService)
         lazy val result = service.generateSecondaryAttributes(seq)
 
-        await(result) shouldBe Seq(Attribute("Solar", 0), Attribute("Atmosphere", 4), Attribute("Temperature", 3), Attribute("Wind", 5))
+        await(result).contains(Attribute("Wind", 1)) shouldBe true
+      }
+
+      "have a value equal to the atmosphere with a value greater than 4" in {
+        val seq = Seq(Attribute("Solar", 0), Attribute("Atmosphere", 5))
+        lazy val service = setupService(diceService)
+        lazy val result = service.generateSecondaryAttributes(seq)
+
+        await(result).contains(Attribute("Wind", 5)) shouldBe true
+      }
+    }
+  }
+
+  "Calling .generateTertiaryAttributes" should {
+
+    "return a list with the original array" in {
+      val seq = Seq(Attribute("Temperature", 2), Attribute("Volatility", 2), Attribute("Atmosphere", 2))
+      lazy val service = setupService(diceService)
+      lazy val result = service.generateTertiaryAttributes(seq)
+
+      await(result).containsSlice(seq) shouldBe true
+    }
+
+    "return a list containing the Water Attribute" which {
+
+      "has a value between 0 and 1 with a temperature of 4" in {
+        val seq = Seq(Attribute("Temperature", 4), Attribute("Volatility", 2), Attribute("Atmosphere", 2))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateTertiaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Water")
+
+        result <= 1 && result >= 0 shouldBe true
+      }
+
+      "has a value of 0 with a temperature of 5" in {
+        val seq = Seq(Attribute("Temperature", 5), Attribute("Volatility", 2), Attribute("Atmosphere", 2))
+        lazy val service = setupService(diceService)
+        lazy val result = service.generateTertiaryAttributes(seq)
+
+        await(result).contains(Attribute("Water", 0))
+      }
+
+      "has a value between 0 and 5 with a temperature less than 4" in {
+        val seq = Seq(Attribute("Temperature", 3), Attribute("Volatility", 2), Attribute("Atmosphere", 2))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateTertiaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Water")
+
+        result <= 5 && result >= 0 shouldBe true
+      }
+    }
+
+    "return a list containing the Fertility Attribute" which {
+
+      "has a value between 0 and 5 with valid atmosphere and temperature of 2" in {
+        val seq = Seq(Attribute("Temperature", 2), Attribute("Volatility", 2), Attribute("Atmosphere", 2))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateTertiaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Fertility")
+
+        result <= 5 && result >= 0 shouldBe true
+      }
+
+      "has a value between 0 and 5 with valid atmosphere and temperature of 3" in {
+        val seq = Seq(Attribute("Temperature", 3), Attribute("Volatility", 2), Attribute("Atmosphere", 3))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateTertiaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Fertility")
+
+        result <= 5 && result >= 0 shouldBe true
+      }
+
+      "has a value between 0 and 5 with invalid atmosphere and temperature but volatility greater than 3" in {
+        val seq = Seq(Attribute("Temperature", 1), Attribute("Volatility", 4), Attribute("Atmosphere", 1))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateTertiaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Fertility")
+
+        result <= 5 && result >= 0 shouldBe true
+      }
+
+      "has a value of 0 with invalid atmosphere, temperature and volatility" in {
+        val seq = Seq(Attribute("Temperature", 1), Attribute("Volatility", 3), Attribute("Atmosphere", 1))
+        lazy val service = setupService(diceService)
+        lazy val attributes = service.generateTertiaryAttributes(seq)
+        lazy val result = service.extractAttributeValue(await(attributes), "Fertility")
+
+        result == 0 shouldBe true
       }
     }
   }
