@@ -22,13 +22,6 @@ class PlanetService @Inject()(diceService: DiceService) {
     }
   }
 
-  def generateTemperature(solar: Int): Future[Attribute] = {
-    diceService.rollDX(3, solar).map { result =>
-      val modified = if (result > 5) 5 else result
-      Attribute("Temperature", modified)
-    }
-  }
-
   def extractAttributeValue(attributes: Seq[Attribute], key: String): Int = {
     attributes.find(_.key == key).map{_.value}.getOrElse(0)
   }

@@ -126,51 +126,6 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
     }
   }
 
-  "Calling generateTemperature" should {
-
-    "return an attribute" which {
-
-      "has a value equal to the dice roll when valid" in {
-        lazy val service = setupMockedService(4)
-        lazy val result = service.generateTemperature(3)
-
-        await(result) shouldBe Attribute("Temperature", 4)
-      }
-
-      "has a value equal to 5 when the dice roll is invalid" in {
-        lazy val service = setupMockedService(6)
-        lazy val result = service.generateTemperature(3)
-
-        await(result) shouldBe Attribute("Temperature", 5)
-      }
-    }
-
-    "return a value" which {
-      lazy val service = setupService(diceService)
-
-      "should be between 0 and 5" in {
-        lazy val temperature = await(service.generateTemperature(await(diceService.rollDX(6))))
-        lazy val result = temperature.value >= 0 && temperature.value <= 5
-
-        result shouldBe true
-      }
-
-      "should not be less than 0" in {
-        lazy val temperature = await(service.generateTemperature(await(diceService.rollDX(6))))
-        lazy val result = temperature.value < 0
-
-        result shouldBe false
-      }
-
-      "should not be greater than 5" in {
-        lazy val temperature = await(service.generateTemperature(await(diceService.rollDX(6))))
-        lazy val result = temperature.value > 5
-
-        result shouldBe false
-      }
-    }
-  }
-
   "Calling .extractAttributeValue" should {
     lazy val service = setupService(diceService)
 
