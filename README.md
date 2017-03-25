@@ -24,7 +24,7 @@ And then go to http://localhost:9000 to see the running web application.
     </tr>
 </table>
 
-## Test Endpoints
+## Test Endpoints /test-only
 
 <table>
     <tr>
@@ -33,7 +33,7 @@ And then go to http://localhost:9000 to see the running web application.
         <th>Description</th>
     </tr>
     <tr>
-        <td>/test-only/generators/planet</td>
+        <td>/generators/planet</td>
         <td>POST</td>
         <td>End point that generates a random planet with the submitted coordinates and returns it.</td>
     </tr>
