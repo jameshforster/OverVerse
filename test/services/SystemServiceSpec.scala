@@ -20,7 +20,7 @@ class SystemServiceSpec extends TestSpec with OneAppPerSuite {
   val diceService: DiceService = app.injector.instanceOf[DiceService]
 
   val planet = PlanetModel(PlanetCoordinateModel(1, 2, 3, 4, 5), 5, EnvironmentModel.magma, Seq(Attribute(AttributeKeys.volatility, 2)))
-  val systemPlanetModel = SystemPlanetModel(PlanetCoordinateModel(1, 2, 3, 4, 5), 5, EnvironmentModel.magma, Attribute(AttributeKeys.volatility, 2))
+  val systemPlanetModel = SystemPlanetModel(PlanetCoordinateModel(1, 2, 3, 4, 5), 5, EnvironmentModel.magma)
 
   def setupService(planet: Future[PlanetModel], diceService: DiceService): SystemService = {
     val mockPlanetService = mock[PlanetService]

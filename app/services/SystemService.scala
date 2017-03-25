@@ -1,8 +1,6 @@
 package services
 
 import com.google.inject.{Inject, Singleton}
-import contants.AttributeKeys
-import models.Attribute
 import models.coordinates.PlanetCoordinateModel
 import models.system.SystemPlanetModel
 
@@ -17,10 +15,7 @@ class SystemService @Inject()(planetService: PlanetService, diceService: DiceSer
 
   def createPlanet(coordinates: PlanetCoordinateModel): Future[SystemPlanetModel] = {
     planetService.generatePlanet(coordinates).map { planet =>
-      val volatility = planet.attributes.find(_.key == AttributeKeys.volatility).getOrElse(
-        Attribute(AttributeKeys.volatility, 0)
-      )
-      SystemPlanetModel(planet.coordinate, planet.size, planet.environment, volatility)
+      SystemPlanetModel(planet.coordinate, planet.size, planet.environment)
     }
   }
 }
