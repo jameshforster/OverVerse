@@ -2,7 +2,7 @@ package controllers.tests
 
 import com.google.inject.{Inject, Singleton}
 import models.coordinates.PlanetCoordinateModel
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
 import services.PlanetService
 
@@ -21,9 +21,9 @@ class TestGeneratorsController @Inject()(planetService: PlanetService) extends C
       case Success(coordinates) => planetService.generatePlanet(coordinates).map { planet =>
         Ok(Json.toJson(planet))
       }.recoverWith {
-        case exception => Future.successful(InternalServerError(s"Unexpected error occurred: ${exception.getMessage}"))
+        case exception => Future.successful(InternalServerError[JsValue](content = Json.toJson(s"Unexpected error occurred: ${exception.getMessage}")))
       }
-      case Failure(exception) => Future.successful(BadRequest(s"Could not bind request body to json due to: ${exception.getMessage}"))
+      case Failure(exception) => Future.successful(BadRequest[JsValue](content = Json.toJson(s"Could not bind request body to json due to: ${exception.getMessage}")))
     }
   }
 }
