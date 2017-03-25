@@ -21,9 +21,9 @@ class TestGeneratorsController @Inject()(planetService: PlanetService) extends C
       case Success(coordinates) => planetService.generatePlanet(coordinates).map { planet =>
         Ok(Json.toJson(planet))
       }.recoverWith {
-        case exception => Future.successful(InternalServerError(exception.getMessage))
+        case exception => Future.successful(InternalServerError(s"Unexpected error occurred: ${exception.getMessage}"))
       }
-      case Failure(exception) => Future.successful(BadRequest(exception.getMessage))
+      case Failure(exception) => Future.successful(BadRequest(s"Could not bind request body to json due to: ${exception.getMessage}"))
     }
   }
 }
