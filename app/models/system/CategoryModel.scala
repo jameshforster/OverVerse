@@ -9,7 +9,7 @@ case class CategoryModel (name: String, conditions: Seq[StarModel => Boolean])
 
 object CategoryModel {
   def apply(name: String): CategoryModel = {
-    allCategories.find(_.name == name).getOrElse(star)
+    allCategories.find(_.name == name).getOrElse(throw new Exception("Invalid star category provided."))
   }
 
   implicit val formatter: OFormat[CategoryModel] = new OFormat[CategoryModel] {
@@ -25,8 +25,17 @@ object CategoryModel {
     star.size >= min && star.size <= max
   }
 
-  val star = CategoryModel("Star", Seq(hasSize(max = 6, min = 3)))
-  val giant = CategoryModel("Giant", Seq(hasSize(max = 10, min = 7)))
-  val dwarf = CategoryModel("Dwarf", Seq(hasSize(max = 2, min = 1)))
-  val allCategories = Seq(star, giant, dwarf)
+  def hasAge(max: Int, min: Int): StarModel => Boolean = { star =>
+    star.age >= min && star.age <= max
+  }
+
+  val redDwarf = CategoryModel("Red Dwarf", Seq(hasSize(max = 1, min = 1)))
+  val yellowStar = CategoryModel("Yellow Star", Seq(hasSize(max = 4, min = 2), hasAge(max = 3, min = 1)))
+  val redGiant = CategoryModel("Red Giant", Seq(hasSize(max = 4, min = 2), hasAge(4, 4)))
+  val whiteDwarf = CategoryModel("White Dwarf", Seq(hasSize(max = 4, min = 2), hasAge(5, 5)))
+  val whiteStar = CategoryModel("White Star", Seq(hasSize(max = 6, min = 5), hasAge(max = 2, min = 1)))
+  val blueStar = CategoryModel("Blue Star", Seq(hasSize(max = 6, min = 5), hasAge(max = 2, min = 1)))
+  val blueGiant = CategoryModel("Blue Giant", Seq(hasSize(max = 6, min = 5), hasAge(max = 5, min = 3)))
+
+  val allCategories = Seq(redDwarf, yellowStar, redGiant, whiteDwarf, whiteStar, blueStar, blueGiant)
 }
