@@ -5,7 +5,7 @@ import play.api.libs.json._
 /**
   * Created by Overlord59 on 25/03/2017.
   */
-case class CategoryModel (name: String, conditions: Seq[StarModel => Boolean])
+case class CategoryModel (name: String, conditions: Seq[(Int, Int) => Boolean])
 
 object CategoryModel {
   def apply(name: String): CategoryModel = {
@@ -21,12 +21,12 @@ object CategoryModel {
     }
   }
 
-  def hasSize(max: Int, min: Int): StarModel => Boolean = { star =>
-    star.size >= min && star.size <= max
+  def hasSize(max: Int, min: Int): (Int, Int) => Boolean = { (size, _) =>
+    size >= min && size <= max
   }
 
-  def hasAge(max: Int, min: Int): StarModel => Boolean = { star =>
-    star.age >= min && star.age <= max
+  def hasAge(max: Int, min: Int): (Int, Int) => Boolean = { (_, age) =>
+    age >= min && age <= max
   }
 
   val redDwarf = CategoryModel("Red Dwarf", Seq(hasSize(max = 1, min = 1)))

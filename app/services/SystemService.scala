@@ -2,7 +2,7 @@ package services
 
 import com.google.inject.{Inject, Singleton}
 import models.coordinates.PlanetCoordinateModel
-import models.system.{StarModel, SystemPlanetModel}
+import models.system.{CategoryModel, StarModel, SystemPlanetModel}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,8 +31,22 @@ class SystemService @Inject()(planetService: PlanetService, diceService: DiceSer
     ???
   }
 
-  def determineCategory(size: Int, age: Int): Future[String] = {
-    val colours = Seq("Red", "Orange", "Yellow", "White", "Blue")
-    ???
+  def determineCategory(size: Int, age: Int): Future[CategoryModel] = {
+
+    val validateCategories: CategoryModel => Boolean = {
+      _.conditions.forall {
+        _.apply(size, age)
+      }
+    }
+
+    def randomiseCategory(categories: Seq[CategoryModel]): Future[CategoryModel] = {
+      diceService.rollDX(categories.length).map { index =>
+        categories.apply(index)
+      }
+    }
+
+    val validCategories = CategoryModel.allCategories.filter(validateCategories)
+
+    randomiseCategory(validCategories)
   }
 }
