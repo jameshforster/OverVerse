@@ -11,7 +11,6 @@ import play.api.libs.json.{Json, OFormat}
 case class SystemPlanetModel(coordinate: PlanetCoordinateModel,
                              size: Int,
                              environment: EnvironmentModel,
-                             volatility: Attribute,
                              name: String = "Unnamed World") {
   Validation.validateSize(size)
 }

@@ -118,14 +118,14 @@ class PlanetServiceSpec extends TestSpec with OneAppPerSuite {
     lazy val service = setupService(diceService)
     lazy val size = await(service.generatePlanetSize())
 
-    "return a value for size between 3 and 10" in {
-      lazy val result = size <= 10 && size >= 3
+    "return a value for size between 1 and 10" in {
+      lazy val result = size <= 10 && size >= 1
 
       result shouldBe true
     }
 
     "not return a value less than 3" in {
-      lazy val result = size < 3
+      lazy val result = size < 1
 
       result shouldBe false
     }

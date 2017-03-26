@@ -28,7 +28,7 @@ class PlanetService @Inject()(diceService: DiceService) {
     } yield PlanetModel(coordinateModel, size, environment, tertiaryAttributes)
   }
 
-  def generatePlanetSize(): Future[Int] = diceService.rollDX(8, 3)
+  def generatePlanetSize(): Future[Int] = diceService.rollDX(10, 1)
 
   def generateAttribute(key: String): Future[Attribute] = {
     diceService.rollDX(6).map { value =>
