@@ -3,7 +3,7 @@ package services
 import contants.AttributeKeys
 import helpers.TestSpec
 import models.Attribute
-import models.coordinates.PlanetCoordinateModel
+import models.coordinates.{PlanetCoordinateModel, SystemCoordinateModel}
 import models.planet.{EnvironmentModel, PlanetModel}
 import models.system.{CategoryModel, StarModel, SystemPlanetModel}
 import org.mockito.ArgumentMatchers
@@ -159,6 +159,106 @@ class SystemServiceSpec extends TestSpec with OneAppPerSuite {
       }
 
       exception.getMessage shouldBe "0"
+    }
+  }
+
+  "Calling .isSlotFilled" when {
+
+    "provided with a small and old star" should {
+      val star = StarModel(1, 5, CategoryModel.redDwarf)
+
+      "return a true on a result of 1" in {
+        lazy val service = setupMockedService(1, 1)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe true
+      }
+
+      "return a false on a result of 0" in {
+        lazy val service = setupMockedService(0)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe false
+      }
+    }
+
+    "provided with a large and young star" should {
+      val star = StarModel(6, 1, CategoryModel.redDwarf)
+
+      "return a true on a result of 10" in {
+        lazy val service = setupMockedService(10, 10)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe true
+      }
+
+      "return a false on a result of 9" in {
+        lazy val service = setupMockedService(9, 9)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe false
+      }
+    }
+  }
+
+  "Calling .createSystemSlot" when {
+    val planetCoordinateModel: PlanetCoordinateModel = mock[PlanetCoordinateModel]
+
+    "provided with a small and old star" should {
+      val star = StarModel(1, 5, CategoryModel.redDwarf)
+
+      "return a filled slot on a result of 1" in {
+        lazy val service = setupMockedService(1, 1)
+        lazy val result = service.createSystemSlot(planetCoordinateModel, star)
+
+        await(result) shouldBe Seq(systemPlanetModel)
+      }
+
+      "return an empty slot on a result of 0" in {
+        lazy val service = setupMockedService(0)
+        lazy val result = service.createSystemSlot(planetCoordinateModel, star)
+
+        await(result) shouldBe Seq()
+      }
+    }
+
+    "provided with a large and young star" should {
+      val star = StarModel(6, 1, CategoryModel.redDwarf)
+
+      "return a filled slot on a result of 10" in {
+        lazy val service = setupMockedService(10, 10)
+        lazy val result = service.createSystemSlot(planetCoordinateModel, star)
+
+        await(result) shouldBe Seq(systemPlanetModel)
+      }
+
+      "return an empty slot on a result of 9" in {
+        lazy val service = setupMockedService(9, 9)
+        lazy val result = service.createSystemSlot(planetCoordinateModel, star)
+
+        await(result) shouldBe Seq()
+      }
+    }
+  }
+
+  "Calling .createSystem" should {
+    val systemCoordinateModel = SystemCoordinateModel(1, 2, 3, 4)
+    lazy val service = setupService(Future.successful(planet), diceService)
+
+    "return a SystemModel" which {
+      lazy val result = service.generateSystem(systemCoordinateModel)
+
+      "has 6 or less planets" in {
+        await(result).planets.length <= 6 shouldBe true
+      }
+
+      "has the coordinates given to it" in {
+        await(result).coordinates shouldBe systemCoordinateModel
+      }
+
+      "has an empty entity sequence" in {
+        await(result).entities shouldBe Seq()
+      }
     }
   }
 }
