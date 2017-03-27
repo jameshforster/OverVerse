@@ -161,4 +161,43 @@ class SystemServiceSpec extends TestSpec with OneAppPerSuite {
       exception.getMessage shouldBe "0"
     }
   }
+
+  "Calling .isSlotFilled" when {
+
+    "provided with a small and old star" should {
+      val star = StarModel(1, 5, CategoryModel.redDwarf)
+
+      "return a true on a result of 1" in {
+        lazy val service = setupMockedService(1, 1)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe true
+      }
+
+      "return a false on a result of 0" in {
+        lazy val service = setupMockedService(0)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe true
+      }
+    }
+
+    "provided with a large and young star" should {
+      val star = StarModel(6, 1, CategoryModel.redDwarf)
+
+      "return a true on a result of 9" in {
+        lazy val service = setupMockedService(9, 9)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe true
+      }
+
+      "return a false on a result of 8" in {
+        lazy val service = setupMockedService(8, 8)
+        lazy val result = service.isSlotFilled(star)
+
+        await(result) shouldBe false
+      }
+    }
+  }
 }
