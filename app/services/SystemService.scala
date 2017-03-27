@@ -20,15 +20,22 @@ class SystemService @Inject()(planetService: PlanetService, diceService: DiceSer
   }
 
   def createStar(): Future[StarModel] = {
-    ???
+    val getSize = determineSize()
+    val getAge = determineAge()
+
+    for {
+      size <- getSize
+      age <- getAge
+      category <- determineCategory(size, age)
+    } yield StarModel(size, age, category)
   }
 
   def determineSize(): Future[Int] = {
-    ???
+    diceService.rollDX(6, 1)
   }
 
   def determineAge(): Future[Int] = {
-    ???
+    diceService.rollDX(5, 1)
   }
 
   def determineCategory(size: Int, age: Int): Future[CategoryModel] = {

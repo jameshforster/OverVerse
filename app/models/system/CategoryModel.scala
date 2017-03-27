@@ -31,8 +31,8 @@ object CategoryModel {
 
   val redDwarf = CategoryModel("Red Dwarf", Seq(hasSize(max = 1, min = 1)))
   val yellowStar = CategoryModel("Yellow Star", Seq(hasSize(max = 4, min = 2), hasAge(max = 3, min = 1)))
-  val redGiant = CategoryModel("Red Giant", Seq(hasSize(max = 4, min = 2), hasAge(4, 4)))
-  val whiteDwarf = CategoryModel("White Dwarf", Seq(hasSize(max = 4, min = 2), hasAge(5, 5)))
+  val redGiant = CategoryModel("Red Giant", Seq(hasSize(max = 4, min = 2), hasAge(max = 4, min = 4)))
+  val whiteDwarf = CategoryModel("White Dwarf", Seq(hasSize(max = 4, min = 2), hasAge(max = 5, min = 5)))
   val whiteStar = CategoryModel("White Star", Seq(hasSize(max = 6, min = 5), hasAge(max = 2, min = 1)))
   val blueStar = CategoryModel("Blue Star", Seq(hasSize(max = 6, min = 5), hasAge(max = 2, min = 1)))
   val blueGiant = CategoryModel("Blue Giant", Seq(hasSize(max = 6, min = 5), hasAge(max = 5, min = 3)))
