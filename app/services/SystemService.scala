@@ -13,6 +13,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class SystemService @Inject()(planetService: PlanetService, diceService: DiceService) {
 
+  def isSlotFilled(starModel: StarModel): Future[Boolean] = {
+    val target = 4 + starModel.size - starModel.age
+
+    def validate(result: Int): Future[Boolean] = Future.successful(result >= target)
+
+    for {
+      dice <- diceService.rollDX(20)
+      result <- validate(dice)
+    } yield result
+  }
+
   def createPlanet(coordinates: PlanetCoordinateModel): Future[SystemPlanetModel] = {
     planetService.generatePlanet(coordinates).map { planet =>
       SystemPlanetModel(planet.coordinate, planet.size, planet.environment)
