@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class SystemService @Inject()(planetService: PlanetService, diceService: DiceService) {
 
-  def createSystem(systemCoordinateModel: SystemCoordinateModel): Future[SystemModel] = {
+  def generateSystem(systemCoordinateModel: SystemCoordinateModel): Future[SystemModel] = {
     val getStar = createStar()
 
     def createPlanets(starModel: StarModel, position: Int = 0): Future[Seq[SystemPlanetModel]] = {

@@ -246,7 +246,7 @@ class SystemServiceSpec extends TestSpec with OneAppPerSuite {
     lazy val service = setupService(Future.successful(planet), diceService)
 
     "return a SystemModel" which {
-      lazy val result = service.createSystem(systemCoordinateModel)
+      lazy val result = service.generateSystem(systemCoordinateModel)
 
       "has 6 or less planets" in {
         await(result).planets.length <= 6 shouldBe true
