@@ -3,6 +3,8 @@ scala:
 - 2.11.8
 jdk:
 - oraclejdk8
+script:
+- sbt scoverage:test
 cache:
   directories:
   - "$HOME/.ivy2/cache"
