@@ -16,7 +16,7 @@ object Validation {
   def validateSize(size: Int): Unit = {
 
     def validateSizeValue(value: Int): Boolean = {
-      value >= 1 && value <= 9
+      value >= 1 && value <= 10
     }
 
     require(validateSizeValue(size), s"A size of $size is invalid for a planet.")

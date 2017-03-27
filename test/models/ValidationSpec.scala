@@ -64,8 +64,8 @@ class ValidationSpec extends TestSpec {
       }
     }
 
-    "using a valid value of 9" should {
-      val result = Validation.validateSize(9)
+    "using a valid value of 10" should {
+      val result = Validation.validateSize(10)
 
       "return a Unit" in {
         result shouldBe {}
@@ -82,13 +82,13 @@ class ValidationSpec extends TestSpec {
       }
     }
 
-    "using an invalid value of 10" should {
+    "using an invalid value of 11" should {
       val exception = intercept[Exception] {
-        Validation.validateSize(10)
+        Validation.validateSize(11)
       }
 
       "return the correct exception" in {
-        exception.getMessage shouldBe "requirement failed: A size of 10 is invalid for a planet."
+        exception.getMessage shouldBe "requirement failed: A size of 11 is invalid for a planet."
       }
     }
   }
