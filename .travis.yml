@@ -4,7 +4,7 @@ scala:
 jdk:
 - oraclejdk8
 script:
-- sbt coverage test
+- sbt coverage test coverageReport
 cache:
   directories:
   - "$HOME/.ivy2/cache"
