@@ -16,3 +16,6 @@ coverageExcludedPackages := "filters.*;router.*;controllers.javascript.*;views.*
 coverageMinimum := 100
 coverageFailOnMinimum := true
 
+fork := true
+javaOptions += "-Xmx4G"
+
