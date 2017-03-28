@@ -31,6 +31,9 @@ class TestGeneratorsControllerSpec extends TestSpec with OneAppPerSuite {
     when(mockSystemService.generateSystem(ArgumentMatchers.any()))
       .thenReturn(system)
 
+    when(mockUniverseService.generateUniverse(ArgumentMatchers.any()))
+      .thenReturn(universe)
+
     new TestGeneratorsController(mockPlanetService, mockSystemService, mockUniverseService)
   }
 
@@ -89,7 +92,7 @@ class TestGeneratorsControllerSpec extends TestSpec with OneAppPerSuite {
         statusOf(result) shouldBe 200
       }
 
-      "contain the correct error message" in {
+      "contain the planet in the body" in {
         bodyOf(result) shouldBe Json.toJson(planet).toString()
       }
     }
@@ -136,7 +139,7 @@ class TestGeneratorsControllerSpec extends TestSpec with OneAppPerSuite {
       }
     }
 
-    "a planet is successfully generated" should {
+    "a system is successfully generated" should {
       lazy val controller = setupController(Future.successful(planet), Future.successful(system), Future.successful(universe))
       lazy val result = controller.createSystem()(FakeRequest("POST", "").withJsonBody(Json.toJson(systemCoordinates)))
 
@@ -144,8 +147,37 @@ class TestGeneratorsControllerSpec extends TestSpec with OneAppPerSuite {
         statusOf(result) shouldBe 200
       }
 
-      "contain the correct error message" in {
+      "contain the system in the body" in {
         bodyOf(result) shouldBe Json.toJson(system).toString()
+      }
+    }
+  }
+
+  "Calling .createUniverse" when {
+
+    "an unexpected error occurs" should {
+      lazy val controller = setupController(Future.successful(planet), Future.successful(system), Future.failed(new Exception("error message")))
+      lazy val result = controller.createUniverse(0)(FakeRequest("GET", ""))
+
+      "return a status of 500" in {
+        statusOf(result) shouldBe 500
+      }
+
+      "contain the correct error message" in {
+        bodyOf(result) shouldBe "\"Unexpected error occurred: error message\""
+      }
+    }
+
+    "a universe is successfully generated" should {
+      lazy val controller = setupController(Future.successful(planet), Future.successful(system), Future.successful(universe))
+      lazy val result = controller.createUniverse(0)(FakeRequest("GET", ""))
+
+      "return a status of 200" in {
+        statusOf(result) shouldBe 200
+      }
+
+      "contain the universe in the body" in {
+        bodyOf(result) shouldBe Json.toJson(universe).toString()
       }
     }
   }
