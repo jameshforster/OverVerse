@@ -1,4 +1,4 @@
-[<img src="https://img.shields.io/travis/jameshforster/OverVerse.svg"/>](https://travis-ci.org/jameshforster/OverVerse)
+[<img src="https://travis-ci.org/jameshforster/OverVerse.svg?branch=master"/>](https://travis-ci.org/jameshforster/OverVerse)
 
 # OverVerse
 
