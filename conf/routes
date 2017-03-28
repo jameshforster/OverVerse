@@ -8,6 +8,7 @@ GET     /                                controllers.HomeController.index
 # Test routes
 POST    /test-only/generators/planet     controllers.tests.TestGeneratorsController.createPlanet()
 POST    /test-only/generators/system     controllers.tests.TestGeneratorsController.createSystem()
+GET     /test-only/generators/universe   controllers.tests.TestGeneratorsController.createUniverse(size: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                    controllers.Assets.versioned(path="/public", file: Asset)

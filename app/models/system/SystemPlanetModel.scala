@@ -1,8 +1,8 @@
 package models.system
 
+import models.Validation
 import models.coordinates.PlanetCoordinateModel
 import models.planet.EnvironmentModel
-import models.{Attribute, Validation}
 import play.api.libs.json.{Json, OFormat}
 
 /**
