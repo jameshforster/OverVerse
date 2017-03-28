@@ -113,6 +113,6 @@ class PlanetService @Inject()(diceService: DiceService) {
 
     val validEnvironments = EnvironmentModel.allEnvironments.filter(validateEnvironment)
 
-    randomiseEnvironment(validEnvironments)
+    randomiseEnvironment(if(validEnvironments.isEmpty) Seq(EnvironmentModel.barren) else validEnvironments)
   }
 }
