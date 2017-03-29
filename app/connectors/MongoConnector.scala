@@ -21,7 +21,7 @@ import scala.concurrent.Future
 @Singleton
 class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
 
-  def collection(collectionName: String): Future[JSONCollection] = reactiveMongoApi.database.map { database => database.collection(collectionName) }
+  private def collection(collectionName: String): Future[JSONCollection] = reactiveMongoApi.database.map { database => database.collection(collectionName) }
 
   def getEntry[T](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[T] = {
 
