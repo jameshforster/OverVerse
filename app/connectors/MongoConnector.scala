@@ -23,7 +23,7 @@ class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiv
 
   private def collection(collectionName: String): Future[JSONCollection] = reactiveMongoApi.database.map { database => database.collection(collectionName) }
 
-  def getEntry[T](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[T] = {
+  def getEntry[T](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[Option[T]] = {
 
     val getCollection = collection(collectionName)
     val handler: Cursor.ErrorHandler[List[T]] = {
@@ -42,7 +42,7 @@ class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiv
     for {
       collection <- getCollection
       list <- filterList(collection)
-    } yield list.head
+    } yield list.headOption
   }
 
   def putEntry[T](collectionName: String, document: T)(implicit writes: OWrites[T]): Future[Unit] = {
