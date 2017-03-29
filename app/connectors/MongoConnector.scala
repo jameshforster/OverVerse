@@ -23,7 +23,7 @@ class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiv
 
   def collection(collectionName: String): Future[JSONCollection] = reactiveMongoApi.database.map { database => database.collection(collectionName) }
 
-  def getEntry[T](collectionName: String, key: String, value: JsObject)(implicit format: OFormat[T]): Future[T] = {
+  def getEntry[T](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[T] = {
 
     val getCollection = collection(collectionName)
     val handler: Cursor.ErrorHandler[List[T]] = {
