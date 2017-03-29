@@ -43,7 +43,7 @@ And then go to http://localhost:9000 to see the running web application.
         <td>End point that generates a random system with the submitted coordinates and returns it.</td>
     </tr>
     <tr>
-        <td>/generators/planet?size</td>
+        <td>/generators/universe?size</td>
         <td>GET</td>
         <td>End point that generates a random universe with a grid of sectors determined by the size.</td>
     </tr>
