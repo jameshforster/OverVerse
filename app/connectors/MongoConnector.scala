@@ -7,7 +7,7 @@ import play.api.libs.json._
 import play.modules.reactivemongo.json._
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.Cursor
-import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -61,6 +61,25 @@ class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiv
     for {
       collection <- getCollection
       insert <- insertDocument(collection)
+      result <- mapResult(insert)
+    } yield result
+  }
+
+  def updateEntry[T](collectionName: String, key: String, value: JsValue, document: T)(implicit oFormat: OFormat[T]): Future[Unit] = {
+    val getCollection = collection(collectionName)
+
+    def updateDocument(collection: JSONCollection): Future[UpdateWriteResult] = {
+      collection.update(Json.obj(key -> value), document)
+    }
+
+    def mapResult(result: UpdateWriteResult): Future[Unit] = {
+      if (result.ok) Future.successful {}
+      else throw new Exception(s"Failed to update document in database: ${result.code.get} ${result.errmsg.get}")
+    }
+
+    for {
+      collection <- getCollection
+      insert <- updateDocument(collection)
       result <- mapResult(insert)
     } yield result
   }
