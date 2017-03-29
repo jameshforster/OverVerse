@@ -12,7 +12,7 @@ libraryDependencies += ws
 libraryDependencies += filters
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 libraryDependencies += "org.mockito" % "mockito-core" % "2.7.17" % Test
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "1.2.1"
+libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.12.1"
 
 coverageExcludedPackages := "filters.*;router.*;controllers.javascript.*;views.*;<empty>;Reverse.*"
 coverageMinimum := 100
