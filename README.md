@@ -307,13 +307,13 @@ And then go to http://localhost:9000 to see the running web application.
     </tr>
     <tr>
         <td>200</td>
-        <td>{PlanetModel}</td>
+        <td>{UniverseModel}</td>
         <td>Successful response.</td>
     </tr>
     <tr>
         <td>400</td>
-        <td>Could not bind request body to json due to: {Exception}</td>
-        <td>Empty or invalid json body submitted in request.</td>
+        <td>BadRequest</td>
+        <td>Empty or invalid query string parameter.</td>
     </tr>
     <tr>
         <td>500</td>
