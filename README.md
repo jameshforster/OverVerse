@@ -37,6 +37,16 @@ And then go to http://localhost:9000 to see the running web application.
         <td>POST</td>
         <td>End point that generates a random planet with the submitted coordinates and returns it.</td>
     </tr>
+    <tr>
+        <td>/generators/system</td>
+        <td>POST</td>
+        <td>End point that generates a random system with the submitted coordinates and returns it.</td>
+    </tr>
+    <tr>
+        <td>/generators/planet?size</td>
+        <td>GET</td>
+        <td>End point that generates a random universe with a grid of sectors determined by the size.</td>
+    </tr>
 </table>
 
 ## POST /test-only/generators/planet
@@ -117,6 +127,173 @@ And then go to http://localhost:9000 to see the running web application.
         }
     ],
     "name": "Unnamed World"
+}
+```
+
+**Response Types**
+
+<table>
+    <tr>
+        <th>Code</th>
+        <th>Body</th>
+        <th>Reason</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>{PlanetModel}</td>
+        <td>Successful response.</td>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>Could not bind request body to json due to: {Exception}</td>
+        <td>Empty or invalid json body submitted in request.</td>
+    </tr>
+    <tr>
+        <td>500</td>
+        <td>Unexpected error occurred: {Exception}</td>
+        <td>Unknown error occurred.</td>
+    </tr>
+</table>
+
+## POST /test-only/generators/system
+
+**Body**
+```
+{
+    "sectorCoordinateModel":{
+        "X":1,
+        "Y":2
+    },
+    "x":3,
+    "y":4
+}
+```
+
+**Response**
+```
+{
+  "coordinates": {
+    "sectorCoordinateModel": {
+      "X": 1,
+      "Y": 2
+    },
+    "x": 3,
+    "y": 4
+  },
+  "star": {
+    "size": 5,
+    "age": 3,
+    "category": {
+      "name": "Blue Giant"
+    }
+  },
+  "planets": [
+    {
+      "coordinate": {
+        "systemCoordinateModel": {
+          "sectorCoordinateModel": {
+            "X": 1,
+            "Y": 2
+          },
+          "x": 3,
+          "y": 4
+        },
+        "z": 0
+      },
+      "size": 9,
+      "environment": {
+        "name": "Desert"
+      },
+      "name": "Unnamed World"
+    }
+  ],
+  "entities": []
+}
+```
+
+**Response Types**
+
+<table>
+    <tr>
+        <th>Code</th>
+        <th>Body</th>
+        <th>Reason</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>{SystemModel}</td>
+        <td>Successful response.</td>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>Could not bind request body to json due to: {Exception}</td>
+        <td>Empty or invalid json body submitted in request.</td>
+    </tr>
+    <tr>
+        <td>500</td>
+        <td>Unexpected error occurred: {Exception}</td>
+        <td>Unknown error occurred.</td>
+    </tr>
+</table>
+
+## GET /test-only/generators/universe?size
+
+**Example**
+```
+    /test-only/generators/universe?size=0
+```
+
+**Response**
+```
+{
+  "sectors": [
+    {
+      "coordinates": {
+        "X": 0,
+        "Y": 0
+      },
+      "systems": [
+        {
+          "coordinates": {
+            "sectorCoordinateModel": {
+              "X": 0,
+              "Y": 0
+            },
+            "x": 0,
+            "y": 5
+          },
+          "star": {
+            "size": 6,
+            "age": 1,
+            "category": {
+              "name": "Blue Star"
+            }
+          },
+          "planets": [
+            {
+              "coordinate": {
+                "systemCoordinateModel": {
+                  "sectorCoordinateModel": {
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "x": 0,
+                  "y": 5
+                },
+                "z": 0
+              },
+              "size": 4,
+              "environment": {
+                "name": "Gas Giant"
+              },
+              "name": "Unnamed World"
+            }
+          ],
+          "entities": []
+        }
+      ]
+    }
+  ]
 }
 ```
 
