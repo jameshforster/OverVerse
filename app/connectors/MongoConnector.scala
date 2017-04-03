@@ -44,7 +44,7 @@ class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiv
     } yield list
   }
 
-  def getEntry[T, U](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[Option[T]] = {
+  def getEntry[T](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[Option[T]] = {
     val getCollection = collection(collectionName)
 
     def filterList(collection: JSONCollection): Future[Option[T]] = {

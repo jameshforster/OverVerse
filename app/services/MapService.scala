@@ -23,6 +23,6 @@ class MapService @Inject()(mongoConnector: MongoConnector) {
   }
 
   def getSector(universeName: String, sectorCoordinateModel: SectorCoordinateModel): Future[Option[SectorModel]] = {
-    mongoConnector.getEntry[SectorModel, SectorCoordinateModel](universeName, "coordinates", Json.toJson(sectorCoordinateModel))
+    mongoConnector.getEntry[SectorModel](universeName, "coordinates", Json.toJson(sectorCoordinateModel))
   }
 }
