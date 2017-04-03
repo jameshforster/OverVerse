@@ -44,11 +44,11 @@ class MongoConnector @Inject()(applicationConfig: ApplicationConfig, val reactiv
     } yield list
   }
 
-  def getEntry[T](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[Option[T]] = {
-      val getCollection = collection(collectionName)
+  def getEntry[T, U](collectionName: String, key: String, value: JsValue)(implicit reads: Reads[T]): Future[Option[T]] = {
+    val getCollection = collection(collectionName)
 
     def filterList(collection: JSONCollection): Future[Option[T]] = {
-      collection.find(Json.obj()).one[T]
+      collection.find(JsObject(Map(key -> value))).one[T]
     }
 
     for {
