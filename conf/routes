@@ -5,6 +5,9 @@
 # An example controller showing a sample home page
 GET     /                                controllers.HomeController.index
 
+# Admin routes
+POST    /admin/new-world                 controllers.admin.CreationController.newUniverse()
+
 # Test routes
 POST    /test-only/generators/planet     controllers.tests.TestGeneratorsController.createPlanet()
 POST    /test-only/generators/system     controllers.tests.TestGeneratorsController.createSystem()
