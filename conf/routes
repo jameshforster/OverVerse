@@ -5,6 +5,9 @@
 # An example controller showing a sample home page
 GET     /                                controllers.HomeController.index
 
+POST    /oververse/map/universe          controllers.MapController.universeMap()
+POST    /oververse/map/sector            controllers.MapController.sectorMap()
+
 # Admin routes
 POST    /admin/new-world                 controllers.admin.CreationController.newUniverse()
 
