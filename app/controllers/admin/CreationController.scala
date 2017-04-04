@@ -15,11 +15,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class CreationController @Inject()(universeService: UniverseService, adminService: AdminService) extends OververseController {
 
-  val newUniverse: Action[AnyContent] = boundAction[NewUniverseModel] { model =>
-    for {
-      universe <- universeService.generateUniverse(model.size)
-      save <- adminService.storeUniverse(model.universeName, universe)
-      response <- successResponse(save)
-    } yield response
+  val newUniverse: Action[AnyContent] = Action.async { implicit request =>
+    boundAction[NewUniverseModel] { model =>
+      for {
+        universe <- universeService.generateUniverse(model.size)
+        save <- adminService.storeUniverse(model.universeName, universe)
+        response <- successResponse(save)
+      } yield response
+    }
   }
 }
