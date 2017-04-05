@@ -17,18 +17,21 @@ class EncryptionServiceSpec extends TestSpec with OneAppPerSuite {
 
     "return a map" which {
 
-      "contains a nonce of size 48" in {
-        result("nonce").length shouldBe 48
+      "contains a nonce of size 64" in {
+        result("nonce").length shouldBe 64
       }
 
-      "contains a value of size 48" in {
-        result("value").length shouldBe 48
+      "contains a value of size 32" in {
+        result("value").length shouldBe 32
       }
     }
   }
 
   "Calling .decrypt" should {
-    val map = Map("nonce" -> "97c4dfbab036962a81b2cecc1f23806bf0e756ade9ebbd51", "value" -> "9785515b65db47a7e41aea06b662298152740c5987bba977")
+    val map = Map(
+      "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+      "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+    )
     lazy val result = service.decrypt(map)
 
     "return a string of 'testData'" in {
