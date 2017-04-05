@@ -1,7 +1,6 @@
 package services
 
-import java.nio.charset.StandardCharsets
-import java.security.{Key, KeyFactory, MessageDigest}
+import java.security.MessageDigest
 import java.util
 import java.util.Random
 import javax.crypto.Cipher
@@ -10,7 +9,6 @@ import javax.crypto.spec.SecretKeySpec
 import com.google.inject.{Inject, Singleton}
 import config.ApplicationConfig
 import org.apache.commons.codec.binary.Hex
-import play.api.Logger
 
 /**
   * Created by james-forster on 04/04/17.
@@ -28,7 +26,8 @@ class EncryptionService @Inject()(applicationConfig: ApplicationConfig) {
   def encrypt(input: String): Map[String, String] = {
 
     def kestrel[A](x: A)(f: A => Unit): A = {
-      f(x); x
+      f(x)
+      x
     }
 
     val random = new Random()
@@ -43,8 +42,10 @@ class EncryptionService @Inject()(applicationConfig: ApplicationConfig) {
       cipher.doFinal(input.getBytes)
     }
 
-    Map("nonce" -> new String(encoder.encode(encryptedNonce)),
-    "value" -> new String(encoder.encode(encryptedResult)))
+    Map(
+      "nonce" -> new String(encoder.encode(encryptedNonce)),
+      "value" -> new String(encoder.encode(encryptedResult))
+    )
   }
 
   def decrypt(data: Map[String, String]): String = {

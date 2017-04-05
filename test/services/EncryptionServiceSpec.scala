@@ -9,7 +9,7 @@ import org.scalatestplus.play.OneAppPerSuite
   */
 class EncryptionServiceSpec extends TestSpec with OneAppPerSuite {
 
-  lazy val config = app.injector.instanceOf[ApplicationConfig]
+  lazy val config: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
   lazy val service = new EncryptionService(config)
 
   "Calling .encrypt" should {
