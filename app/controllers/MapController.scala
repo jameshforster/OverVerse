@@ -1,7 +1,6 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import models.coordinates.SectorCoordinateModel
 import models.universe.SectorMapModel
 import play.api.mvc.{Action, AnyContent}
 import services.MapService
@@ -15,17 +14,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class MapController @Inject()(mapService: MapService) extends OververseController {
 
-  val universeMap: Action[AnyContent] = boundAction[String] { name =>
-    mapService.getUniverse(name).flatMap {
-      case universe if universe.sectors.isEmpty => notFound(name)
-      case universe => okResponse(universe)
+  val universeMap: Action[AnyContent] = Action.async { implicit request =>
+    boundAction[String] { name =>
+      mapService.getUniverse(name).flatMap {
+        case universe if universe.sectors.isEmpty => notFound(name)
+        case universe => okResponse(universe)
+      }
     }
   }
 
-  val sectorMap: Action[AnyContent] = boundAction[SectorMapModel] { model =>
-    mapService.getSector(model.universeName, model.coordinates).flatMap {
-      case Some(sector) => okResponse(sector)
-      case None => notFound(model.coordinates.toString)
+  val sectorMap: Action[AnyContent] = Action.async { implicit request =>
+    boundAction[SectorMapModel] { model =>
+      mapService.getSector(model.universeName, model.coordinates).flatMap {
+        case Some(sector) => okResponse(sector)
+        case None => notFound(model.coordinates.toString)
+      }
     }
   }
 }
