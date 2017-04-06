@@ -1,4 +1,4 @@
-package services
+package services.auth
 
 import config.ApplicationConfig
 import helpers.TestSpec

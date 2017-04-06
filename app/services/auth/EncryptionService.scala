@@ -1,4 +1,4 @@
-package services
+package services.auth
 
 import java.security.MessageDigest
 import java.util
