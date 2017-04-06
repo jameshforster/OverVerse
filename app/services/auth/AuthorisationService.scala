@@ -72,4 +72,18 @@ class AuthorisationService @Inject()(encryptionService: EncryptionService, mongo
       }
     }
   }
+
+  def registerUser(username: String, email: String, password: String): Future[Boolean] = {
+    val newUser = UserDetailsModel(username, email, encryptionService.encrypt(password))
+    val checkUniqueUser: Option[UserDetailsModel] => Boolean = {
+      case Some(_) => false
+      case _ =>
+        mongoConnector.putEntry[UserDetailsModel]("authorisation", newUser)
+        true
+    }
+
+    mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
+      checkUniqueUser
+    }
+  }
 }

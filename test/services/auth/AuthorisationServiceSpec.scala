@@ -28,6 +28,9 @@ class AuthorisationServiceSpec extends TestSpec with OneAppPerSuite {
       ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
       .thenReturn(Future.successful{})
 
+    when(mockConnector.putEntry(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+      .thenReturn(Future.successful{})
+
     new AuthorisationService(encryptionService, mockConnector)
   }
 
@@ -141,6 +144,43 @@ class AuthorisationServiceSpec extends TestSpec with OneAppPerSuite {
     "an error occurs in the connector" should {
       lazy val service = setupService(Future.failed(new Exception("error message")))
       lazy val result = service.validateUser("name", "testData")
+
+      "return the correct exception" in {
+        val exception = intercept[Exception] {await(result)}
+
+        exception.getMessage shouldBe "error message"
+      }
+    }
+  }
+
+  "Calling .registerUser" when {
+
+    "no matching user is found" should {
+      lazy val service = setupService(Future.successful(None))
+      lazy val result = service.registerUser("name", "email@example.com", "password")
+
+      "return a true" in {
+        await(result) shouldBe true
+      }
+    }
+
+    "a matching user is found" should {
+      val map = Map(
+        "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+        "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+      )
+      val user = UserDetailsModel("name", "name@example.com", map)
+      lazy val service = setupService(Future.successful(Some(user)))
+      lazy val result = service.registerUser("name", "email@example.com", "password")
+
+      "return a false" in {
+        await(result) shouldBe false
+      }
+    }
+
+    "en error occurs connecting to the database" should {
+      lazy val service = setupService(Future.failed(new Exception("error message")))
+      lazy val result = service.registerUser("name", "email@example.com", "password")
 
       "return the correct exception" in {
         val exception = intercept[Exception] {await(result)}
