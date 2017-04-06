@@ -19,13 +19,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class AuthorisationService @Inject()(encryptionService: EncryptionService, mongoConnector: MongoConnector) {
 
-  def validateUser(username: String, password: String): Future[Option[String]] = {
-    def createToken(): AuthTokenModel = {
-      val encoder = new Hex
-      val token = new String(encoder.encode(Random.nextString(8).getBytes()))
-      AuthTokenModel(encryptionService.encrypt(token), LocalDateTime.now().plusMinutes(30))
-    }
+  def createToken(): AuthTokenModel = {
+    val encoder = new Hex
+    val token = new String(encoder.encode(Random.nextString(8).getBytes()))
+    AuthTokenModel(encryptionService.encrypt(token), LocalDateTime.now().plusMinutes(30))
+  }
 
+  def loginUser(username: String, password: String): Future[Option[String]] = {
     mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
      _.flatMap { details =>
         encryptionService.decrypt(details.password) match {
@@ -37,6 +37,24 @@ class AuthorisationService @Inject()(encryptionService: EncryptionService, mongo
             Some(token.token("value"))
 
           case _ => None
+        }
+      }
+    }
+  }
+
+  def validateUser(username: String, authToken: String): Future[Option[Boolean]] = {
+    mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
+      _.flatMap { details =>
+        details.token.map { token =>
+          if(token.expiresOn.isAfter(LocalDateTime.now())) {
+            val matching = authToken == token.token("value")
+            if (matching) {
+              val refreshedToken = AuthTokenModel(token.token, LocalDateTime.now().plusMinutes(30))
+              val refreshedUser = UserDetailsModel(details.username, details.email, details.password, details.isActivated, Some(refreshedToken))
+              mongoConnector.updateEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username), refreshedUser)
+            }
+            matching
+          } else false
         }
       }
     }
