@@ -98,7 +98,8 @@ class AuthorisationServiceSpec extends TestSpec with OneAppPerSuite {
         "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
         "value" -> "33b8c73001f82ca28f3e26e1af1db245"
       )
-      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(map, LocalDateTime.now().plusMinutes(5))))
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().plusMinutes(5))))
       lazy val service = setupService(Future.successful(Some(user)))
       lazy val result = service.validateUser("name", "wrong token")
 
@@ -112,7 +113,8 @@ class AuthorisationServiceSpec extends TestSpec with OneAppPerSuite {
         "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
         "value" -> "33b8c73001f82ca28f3e26e1af1db245"
       )
-      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(map, LocalDateTime.now().minusMinutes(5))))
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().minusMinutes(5))))
       lazy val service = setupService(Future.successful(Some(user)))
       lazy val result = service.validateUser("name", "33b8c73001f82ca28f3e26e1af1db245")
 
@@ -126,7 +128,8 @@ class AuthorisationServiceSpec extends TestSpec with OneAppPerSuite {
         "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
         "value" -> "33b8c73001f82ca28f3e26e1af1db245"
       )
-      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(map, LocalDateTime.now().plusMinutes(5))))
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().plusMinutes(5))))
       lazy val service = setupService(Future.successful(Some(user)))
       lazy val result = service.validateUser("name", "33b8c73001f82ca28f3e26e1af1db245")
 
