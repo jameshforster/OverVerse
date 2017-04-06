@@ -17,9 +17,8 @@ import org.apache.commons.codec.binary.Hex
 @Singleton
 class EncryptionService @Inject()(applicationConfig: ApplicationConfig) {
 
-  private val testKey = "9aaf832a59bf2f4cf87183c158ced62a1f9b4539015111b4cd47335ad72a1045"
   private val sha = MessageDigest.getInstance("SHA-1")
-  private val secretKey: SecretKeySpec = new SecretKeySpec(util.Arrays.copyOf(sha.digest(testKey.getBytes()), 16), "AES")
+  private val secretKey: SecretKeySpec = new SecretKeySpec(util.Arrays.copyOf(sha.digest(applicationConfig.encryptionKey.getBytes()), 16), "AES")
   private val cipher = Cipher.getInstance("AES")
   private val encoder = new Hex
 

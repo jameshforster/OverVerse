@@ -9,7 +9,7 @@ import play.api.Configuration
 
 @Singleton
 class ApplicationConfig @Inject()(val configuration: Configuration) extends AppConfig {
-  lazy val mongoUrl: String = getUrl("external-connections.database")
+  lazy val encryptionKey: String = configuration.getString("security.key").getOrElse("")
 }
 
 trait AppConfig {
