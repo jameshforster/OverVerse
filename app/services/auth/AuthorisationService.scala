@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import com.google.inject.{Inject, Singleton}
 import connectors.MongoConnector
 import models.auth.{AuthTokenModel, UserDetailsModel}
+import models.exceptions._
 import org.apache.commons.codec.binary.Hex
 import play.api.libs.json.Json
 
@@ -30,33 +31,31 @@ class AuthorisationService @Inject()(encryptionService: EncryptionService, mongo
     mongoConnector.updateEntry[UserDetailsModel]("authorisation", "username", Json.toJson(details.username), user)
   }
 
-  def loginUser(username: String, password: String): Future[Option[String]] = {
+  def loginUser(username: String, password: String): Future[String] = {
 
-    def setNewAuthToken(details: UserDetailsModel): Option[String] = {
+    def setNewAuthToken(details: UserDetailsModel): String = {
       val token = createToken()
       setAuthToken(details, token)
-      Some(token.token)
+      token.token
     }
 
-    val comparePassword: UserDetailsModel => Option[String] = details =>
+    val comparePassword: UserDetailsModel => String = details =>
       encryptionService.decrypt(details.password) match {
         case `password` => setNewAuthToken(details)
-        case _ => None
+        case _ => throw new IncorrectPasswordException
       }
 
     mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
-      _.flatMap {
-        comparePassword
-      }
+      details => comparePassword(details.getOrElse(throw new UserNotFoundException))
     }
   }
 
-  def validateUser(username: String, authToken: String): Future[Option[Boolean]] = {
-    def compareToken(details: UserDetailsModel, token: AuthTokenModel): Boolean = token match {
+  def validateUser(username: String, authToken: String): Future[Unit] = {
+    def compareToken(details: UserDetailsModel, token: AuthTokenModel): Unit = token match {
       case AuthTokenModel(`authToken`, expires) if expires.isAfter(LocalDateTime.now()) =>
         setRefreshedToken(details, token)
-        true
-      case _ => false
+      case AuthTokenModel(`authToken`, _) => throw new TokenTimeoutException
+      case _ => throw new InvalidTokenException
     }
 
     def setRefreshedToken(details: UserDetailsModel, token: AuthTokenModel): Future[Unit] = {
@@ -65,21 +64,18 @@ class AuthorisationService @Inject()(encryptionService: EncryptionService, mongo
     }
 
     mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
-      _.flatMap { details =>
-        details.token.map { token =>
-          compareToken(details, token)
-        }
+      details => {
+        val result = details.getOrElse(throw new UserNotFoundException)
+        compareToken(result, result.token.getOrElse(throw new InvalidTokenException))
       }
     }
   }
 
-  def registerUser(username: String, email: String, password: String): Future[Boolean] = {
+  def registerUser(username: String, email: String, password: String): Future[Unit] = {
     val newUser = UserDetailsModel(username, email, encryptionService.encrypt(password))
-    val checkUniqueUser: Option[UserDetailsModel] => Boolean = {
-      case Some(_) => false
-      case _ =>
-        mongoConnector.putEntry[UserDetailsModel]("authorisation", newUser)
-        true
+    val checkUniqueUser: Option[UserDetailsModel] => Unit = {
+      case Some(_) => throw new DuplicateUserException
+      case _ => mongoConnector.putEntry[UserDetailsModel]("authorisation", newUser)
     }
 
     mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
