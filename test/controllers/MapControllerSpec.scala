@@ -8,6 +8,7 @@ import services.MapService
 import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import services.auth.AuthorisationService
 
 import scala.concurrent.Future
 
@@ -26,7 +27,7 @@ class MapControllerSpec extends TestSpec {
     when(mockService.getSector(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(sector)
 
-    new MapController(mockService)
+    new MapController(mockService, mock[AuthorisationService])
   }
 
   val validUniverse = UniverseModel(Seq(SectorModel(SectorCoordinateModel(0, 0), Seq()), SectorModel(SectorCoordinateModel(0, 1), Seq())))

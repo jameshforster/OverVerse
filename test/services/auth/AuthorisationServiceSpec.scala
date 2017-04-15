@@ -180,6 +180,113 @@ class AuthorisationServiceSpec extends TestSpec with OneAppPerSuite {
     }
   }
 
+  "Calling .validateAdmin" when {
+
+    "no matching user is found" should {
+      lazy val service = setupService(Future.successful(None))
+      lazy val result = service.validateAdmin("name", "testData")
+
+      "return an UserNotFoundException" in {
+        intercept[Exception] {
+          await(result)
+        }.isInstanceOf[UserNotFoundException] shouldBe true
+      }
+    }
+
+    "a matching user is found with no token" should {
+      val map = Map(
+        "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+        "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+      )
+      val user = UserDetailsModel("name", "name@example.com", map, level = 10)
+      lazy val service = setupService(Future.successful(Some(user)))
+      lazy val result = service.validateAdmin("name", "wrong token")
+
+      "return an InvalidTokenException" in {
+        intercept[Exception] {
+          await(result)
+        }.isInstanceOf[InvalidTokenException] shouldBe true
+      }
+    }
+
+    "a matching user is found with the wrong token" should {
+      val map = Map(
+        "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+        "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+      )
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().plusMinutes(5))), level = 10)
+      lazy val service = setupService(Future.successful(Some(user)))
+      lazy val result = service.validateAdmin("name", "wrong token")
+
+      "return an InvalidTokenException" in {
+        intercept[Exception] {
+          await(result)
+        }.isInstanceOf[InvalidTokenException] shouldBe true
+      }
+    }
+
+    "a matching user is found with an outdated token" should {
+      val map = Map(
+        "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+        "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+      )
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().minusMinutes(5))), level = 10)
+      lazy val service = setupService(Future.successful(Some(user)))
+      lazy val result = service.validateAdmin("name", "33b8c73001f82ca28f3e26e1af1db245")
+
+      "return a TokenTimeoutException" in {
+        intercept[Exception] {
+          await(result)
+        }.isInstanceOf[TokenTimeoutException] shouldBe true
+      }
+    }
+
+    "a matching user is found with the correct token but an incorrect level" should {
+      val map = Map(
+        "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+        "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+      )
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().plusMinutes(5))))
+      lazy val service = setupService(Future.successful(Some(user)))
+      lazy val result = service.validateAdmin("name", "33b8c73001f82ca28f3e26e1af1db245")
+
+      "return a InsufficientPermissionException" in {
+        intercept[Exception] {
+          await(result)
+        }.isInstanceOf[InsufficientPermissionException] shouldBe true
+      }
+    }
+
+    "a matching user is found with the correct token and sufficient level" should {
+      val map = Map(
+        "nonce" -> "a954bf74662060335285a4b482055ef8b9b38eeee1808f97ea7602fcde77b2ed",
+        "value" -> "33b8c73001f82ca28f3e26e1af1db245"
+      )
+      val token = "33b8c73001f82ca28f3e26e1af1db245"
+      val user = UserDetailsModel("name", "name@example.com", map, token = Some(AuthTokenModel(token, LocalDateTime.now().plusMinutes(5))), level = 10)
+      lazy val service = setupService(Future.successful(Some(user)))
+      lazy val result = service.validateAdmin("name", "33b8c73001f82ca28f3e26e1af1db245")
+
+      "return a success" in {
+        await(result) shouldBe {}
+      }
+    }
+
+    "an error occurs in the connector" should {
+      lazy val service = setupService(Future.failed(new Exception("error message")))
+      lazy val result = service.validateAdmin("name", "testData")
+
+      "return the correct exception" in {
+        val exception = intercept[Exception] {await(result)}
+
+        exception.getMessage shouldBe "error message"
+      }
+    }
+  }
+
   "Calling .registerUser" when {
 
     "no matching user is found" should {

@@ -12,6 +12,7 @@ import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
+import services.auth.AuthorisationService
 
 import scala.concurrent.Future
 
@@ -34,7 +35,7 @@ class TestGeneratorsControllerSpec extends TestSpec with OneAppPerSuite {
     when(mockUniverseService.generateUniverse(ArgumentMatchers.any()))
       .thenReturn(universe)
 
-    new TestGeneratorsController(mockPlanetService, mockSystemService, mockUniverseService)
+    new TestGeneratorsController(mockPlanetService, mockSystemService, mockUniverseService, mock[AuthorisationService])
   }
 
   val planetCoordinates = PlanetCoordinateModel(1, 2, 3, 4, 5)

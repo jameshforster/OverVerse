@@ -4,6 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import models.universe.SectorMapModel
 import play.api.mvc.{Action, AnyContent}
 import services.MapService
+import services.auth.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -12,7 +13,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 
 @Singleton
-class MapController @Inject()(mapService: MapService) extends OververseController {
+class MapController @Inject()(mapService: MapService,
+                              val authorisationService: AuthorisationService) extends OververseController {
 
   val universeMap: Action[AnyContent] = Action.async { implicit request =>
     boundAction[String] { name =>

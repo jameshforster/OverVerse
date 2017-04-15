@@ -71,6 +71,29 @@ class AuthorisationService @Inject()(encryptionService: EncryptionService, mongo
     }
   }
 
+  def validateAdmin(username: String, authToken: String): Future[Unit] = {
+
+    def compareToken(details: UserDetailsModel, token: AuthTokenModel): Unit = token match {
+      case AuthTokenModel(`authToken`, expires) if expires.isAfter(LocalDateTime.now()) =>
+        setRefreshedToken(details, token)
+      case AuthTokenModel(`authToken`, _) => throw new TokenTimeoutException
+      case _ => throw new InvalidTokenException
+    }
+
+    def setRefreshedToken(details: UserDetailsModel, token: AuthTokenModel): Future[Unit] = {
+      val refreshedToken = AuthTokenModel(token.token, LocalDateTime.now().plusMinutes(60))
+      setAuthToken(details, refreshedToken)
+    }
+
+    mongoConnector.getEntry[UserDetailsModel]("authorisation", "username", Json.toJson(username)).map {
+      details => {
+        val result = details.getOrElse(throw new UserNotFoundException)
+        if (result.level >= 10) compareToken(result, result.token.getOrElse(throw new InvalidTokenException))
+        else throw new InsufficientPermissionException(result.level, 10)
+      }
+    }
+  }
+
   def registerUser(username: String, email: String, password: String): Future[Unit] = {
     val newUser = UserDetailsModel(username, email, encryptionService.encrypt(password))
     val checkUniqueUser: Option[UserDetailsModel] => Unit = {

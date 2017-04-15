@@ -9,9 +9,9 @@ case class UserDetailsModel(username: String,
                             email: String,
                             password: Map[String, String],
                             isActivated: Boolean = false,
-                            token: Option[AuthTokenModel] = None)
+                            token: Option[AuthTokenModel] = None,
+                            level: Int = 0)
 
 object UserDetailsModel {
   implicit val jsonFormat: OFormat[UserDetailsModel] = Json.format[UserDetailsModel]
 }
-

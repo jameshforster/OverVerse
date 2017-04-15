@@ -4,6 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import models.coordinates.{PlanetCoordinateModel, SystemCoordinateModel}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Controller}
+import services.auth.AuthorisationService
 import services.{PlanetService, SystemService, UniverseService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,7 +15,8 @@ import scala.util.{Failure, Success, Try}
   * Created by james-forster on 24/03/17.
   */
 @Singleton
-class TestGeneratorsController @Inject()(planetService: PlanetService, systemService: SystemService, universeService: UniverseService) extends Controller {
+class TestGeneratorsController @Inject()(planetService: PlanetService, systemService: SystemService, universeService: UniverseService,
+                                         val authorisationService: AuthorisationService) extends Controller {
 
   val createPlanet: Action[AnyContent] = Action.async { implicit request =>
     Try(request.body.asJson.get.as[PlanetCoordinateModel]) match {
