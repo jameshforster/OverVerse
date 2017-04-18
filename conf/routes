@@ -8,8 +8,8 @@ GET     /                                controllers.HomeController.index
 POST    /oververse/map/universe          controllers.MapController.universeMap()
 POST    /oververse/map/sector            controllers.MapController.sectorMap()
 
-POST    /oververse/user/login            controllers.UserController.loginUser()
-POST    /oververse/user/register         controllers.UserController.createUser()
+POST    /oververse/user/login            controllers.AccountController.loginUser()
+POST    /oververse/user/register         controllers.AccountController.createUser()
 
 # Admin routes
 POST    /admin/new-world                 controllers.admin.CreationController.newUniverse()

@@ -15,10 +15,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by james-forster on 15/04/17.
   */
-class UserControllerSpec extends TestSpec {
+class AccountControllerSpec extends TestSpec {
 
   def setupController(response: Future[Unit] = Future.successful{},
-                     token: Future[String] = Future.successful("")): UserController = {
+                     token: Future[String] = Future.successful("")): AccountController = {
     val mockAuthorisationService = mock[AuthorisationService]
 
     when(mockAuthorisationService.registerUser(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
@@ -27,7 +27,7 @@ class UserControllerSpec extends TestSpec {
     when(mockAuthorisationService.loginUser(ArgumentMatchers.any(), ArgumentMatchers.any()))
     .thenReturn(token)
 
-    new UserController(mockAuthorisationService)
+    new AccountController(mockAuthorisationService)
   }
 
   "Calling .createUser" when {

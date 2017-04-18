@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Created by james-forster on 15/04/17.
   */
 @Singleton
-class UserController @Inject()(val authorisationService: AuthorisationService) extends OververseController {
+class AccountController @Inject()(val authorisationService: AuthorisationService) extends OververseController {
 
   val createUser: Action[AnyContent] = Action.async { implicit request =>
     boundAction[NewUserModel]{ user =>
